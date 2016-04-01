@@ -16,9 +16,21 @@
     UILabel *_contentLB;
 }
 
+/**
+ *  页面初始化
+ */
 + (instancetype)shareLogView;
+
+/**
+ *  加入日志文本，自动同步到本地日志文件中
+ *
+ *  @param logStr 日志文本内容
+ */
 + (void)addLogText:(NSString *)logStr;
 
+/**
+ *  日志在app上唤出
+ */
 - (void)show;
 
 @end

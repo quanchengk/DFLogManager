@@ -9,6 +9,11 @@
 #import "AppDelegate.h"
 #import "DFLogView.h"
 
+/**
+ *  崩溃日志记录
+ *
+ *  @param exception 崩溃对象
+ */
 void UncaughtExceptionHandler(NSException *exception) {
     
     NSArray *arr = [exception callStackSymbols];//得到当前调用栈信息
@@ -28,7 +33,6 @@ void UncaughtExceptionHandler(NSException *exception) {
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    //开启DDLOG日志记录
     [self initLog];
     
     return YES;
@@ -36,8 +40,10 @@ void UncaughtExceptionHandler(NSException *exception) {
 
 - (void)initLog
 {
+    //崩溃日志注册
     NSSetUncaughtExceptionHandler(&UncaughtExceptionHandler);
     
+    //开启DDLOG日志记录
     [DFLogManager shareLogManager];
 }
 
