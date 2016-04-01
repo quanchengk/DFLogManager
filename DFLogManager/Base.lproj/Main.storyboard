@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H4q-Q2-hGD">
+                                <rect key="frame" x="215" y="404" width="90" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="TqI-AW-b5N"/>
+                                    <constraint firstAttribute="width" constant="90" id="jnX-zY-3KQ"/>
+                                </constraints>
+                                <state key="normal" title="崩溃日志调试"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H7q-cb-A4b">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="1KB-Vp-d8z"/>
+                                    <constraint firstAttribute="width" constant="108" id="7ba-FN-3Y4"/>
+                                </constraints>
+                                <state key="normal" title="新增普通日志"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="1KB-Vp-d8z"/>
+                                        <exclude reference="7ba-FN-3Y4"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular">
+                                    <mask key="constraints">
+                                        <include reference="1KB-Vp-d8z"/>
+                                        <include reference="7ba-FN-3Y4"/>
+                                    </mask>
+                                </variation>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="H7q-cb-A4b" secondAttribute="bottom" constant="166" id="1lU-RV-SYY"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="H4q-Q2-hGD" secondAttribute="bottom" constant="166" id="30F-53-5zr"/>
+                            <constraint firstItem="H4q-Q2-hGD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="195" id="6Uh-kM-SYS"/>
+                            <constraint firstItem="H7q-cb-A4b" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="21" id="wuF-Uc-w3R"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="H7q-cb-A4b"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="wuF-Uc-w3R"/>
+                                <exclude reference="1lU-RV-SYY"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular">
+                            <mask key="subviews">
+                                <include reference="H7q-cb-A4b"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="wuF-Uc-w3R"/>
+                                <include reference="1lU-RV-SYY"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="addBtn" destination="H7q-cb-A4b" id="eBo-CV-XbX"/>
+                        <outlet property="crachBtn" destination="H4q-Q2-hGD" id="Q2q-lw-Zy9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="305" y="256.5"/>
+        </scene>
+    </scenes>
+</document>
