@@ -11,9 +11,7 @@
 
 @interface DFLogView : UIView {
     
-    UIScrollView *_sc;
-    UIView *_contentView;
-    UILabel *_contentLB;
+    UITextView *_textView;
 }
 
 /**

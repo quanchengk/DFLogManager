@@ -89,7 +89,8 @@ static DFLogManager *_instance;
     BOOL isCreate = NO;
     
     if ([fileManger fileExistsAtPath:fulPath]) {
-        if([[fileManger attributesOfItemAtPath:fulPath error:nil] fileSize] > 10000){
+        
+        if([[fileManger attributesOfItemAtPath:fulPath error:nil] fileSize] > 100000){
             [fileManger removeItemAtPath:fulPath error:nil];
             isCreate = YES;
         }

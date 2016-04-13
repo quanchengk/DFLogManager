@@ -33,7 +33,7 @@
 {
     [super viewDidAppear:animated];
     
-    addLogText(@"页面全部展示后唤出");
+    addLogText(@"页面展示");
     
     [[DFLogView shareLogView] performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
 }

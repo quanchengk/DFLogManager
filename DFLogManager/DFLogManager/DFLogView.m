@@ -124,27 +124,16 @@ static DFLogView *_instance;
             [self removeFromSuperview];
         }];
         
-        UIScrollView *sc = [UIScrollView new];
-        sc.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
-        [self addSubview:sc];
-        _sc = sc;
+        UITextView *textView = [UITextView new];
+        textView.font = [UIFont boldSystemFontOfSize:12];
+        textView.textColor = [UIColor blackColor];
+        [self addSubview:textView];
+        _textView = textView;
         
-        UILabel *contentLB = [UILabel new];
-        contentLB.font = [UIFont boldSystemFontOfSize:12];
-        contentLB.textColor = [UIColor blackColor];
-        contentLB.numberOfLines = 0;
-        [sc addSubview:contentLB];
-        _contentLB = contentLB;
-        
-        [_sc mas_makeConstraints:^(MASConstraintMaker *make) {
+        [textView mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.top.equalTo(self).offset(50).priorityHigh();
             make.left.right.bottom.equalTo(self);
-        }];
-        
-        [_contentLB mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.edges.equalTo(_sc);
         }];
     }
     return self;
@@ -175,7 +164,7 @@ static DFLogView *_instance;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            _contentLB.text = logStr;
+            _textView.text = logStr;
         });
     });
 }
