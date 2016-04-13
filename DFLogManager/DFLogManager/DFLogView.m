@@ -99,7 +99,7 @@ static DFLogView *_instance;
             make.size.mas_equalTo(CGSizeMake(30, 30));
             make.right.bottom.equalTo(self);
         }];
-    
+        
         [moveableView mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.left.top.equalTo(self);
@@ -288,69 +288,56 @@ static DFLogView *_instance;
     
     [keyWindow addSubview:self];
     
-    self.frame = CGRectMake(0, 0, keyWindow.frame.size.width, keyWindow.frame.size.height);
+    self.frame = UIEdgeInsetsInsetRect(keyWindow.bounds, UIEdgeInsetsMake(20, 10, 10, 10));
     
     [self updateContent];
 }
 
 - (void)updateContent
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        NSString *logFilePath = [[DFLogManager shareLogManager] logsDirectory];
-        NSData *logData = [NSData dataWithContentsOfFile:logFilePath];
-        _logStr = [[NSString alloc] initWithData:logData encoding:NSUTF8StringEncoding];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self search:_searchTF.text];
-        });
-    });
+    NSString *logFilePath = [[DFLogManager shareLogManager] logsDirectory];
+    NSData *logData = [NSData dataWithContentsOfFile:logFilePath];
+    _logStr = [[NSString alloc] initWithData:logData encoding:NSUTF8StringEncoding];
+    [self search:_searchTF.text];
 }
 
 - (void)search:(NSString *)keyStr {
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [_searchRanges removeAllObjects];
+    
+    NSRange range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(0, _logStr.length)];
+    while (range.length) {
         
-        [_searchRanges removeAllObjects];
+        [_searchRanges addObject:[NSValue valueWithRange:range]];
+        range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(range.length + range.location, _logStr.length - range.length - range.location)];
+    }
+    
+    NSMutableAttributedString *mAttr = [[NSMutableAttributedString alloc] initWithString:_logStr];
+    [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
+                           NSForegroundColorAttributeName: [UIColor blackColor],
+                           NSBackgroundColorAttributeName: [UIColor clearColor]} range:NSMakeRange(0, _logStr.length)];
+    for (NSValue *rangeValue in _searchRanges) {
         
-        NSRange range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(0, _logStr.length)];
-        while (range.length) {
-            
-            [_searchRanges addObject:[NSValue valueWithRange:range]];
-            range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(range.length + range.location, _logStr.length - range.length - range.location)];
-        }
+        [mAttr addAttributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:14],
+                               NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[rangeValue rangeValue]];
+    }
+    UILabel *leftLabel = (UILabel *)_searchTF.leftView;
+    _textView.attributedText = mAttr;
+    
+    if (_searchRanges.count) {
         
-        NSMutableAttributedString *mAttr = [[NSMutableAttributedString alloc] initWithString:_logStr];
-        [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
-                               NSForegroundColorAttributeName: [UIColor blackColor],
-                               NSBackgroundColorAttributeName: [UIColor clearColor]} range:NSMakeRange(0, _logStr.length)];
-        for (NSValue *rangeValue in _searchRanges) {
-            
-            [mAttr addAttributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:14],
-                                   NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[rangeValue rangeValue]];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            UILabel *leftLabel = (UILabel *)_searchTF.leftView;
-            _textView.attributedText = mAttr;
-            
-            if (_searchRanges.count) {
-                
-                _selectRange = _searchRanges[0];
-                [self selectIndex:0];
-            }
-            else {
-                
-                [_textView scrollRangeToVisible:NSMakeRange(_logStr.length - 1, 1)];
-                leftLabel.text = @"";
-                [leftLabel sizeToFit];
-                
-                _preBtn.selected = YES;
-                _nextBtn.selected = YES;
-            }
-        });
-    });
+        _selectRange = _searchRanges[0];
+        [self selectIndex:0];
+    }
+    else {
+        
+        [_textView scrollRangeToVisible:NSMakeRange(_logStr.length - 1, 1)];
+        leftLabel.text = @"";
+        [leftLabel sizeToFit];
+        
+        _preBtn.selected = YES;
+        _nextBtn.selected = YES;
+    }
 }
 
 - (void)selectIndex:(NSInteger)index {
@@ -390,11 +377,11 @@ static DFLogView *_instance;
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect {
+ // Drawing code
+ }
+ */
 
 @end
