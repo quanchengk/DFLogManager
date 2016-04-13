@@ -28,12 +28,17 @@ static DFLogView *_instance;
         
         self.alpha = .7;
         self.backgroundColor = [UIColor clearColor];
+        self.clipsToBounds = YES;
         
-        UIButton *scaleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        scaleBtn.backgroundColor = [UIColor darkGrayColor];
-        [scaleBtn setTitle:@"缩小" forState:UIControlStateNormal];
-        [scaleBtn setTitle:@"放大" forState:UIControlStateSelected];
-        scaleBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        UIView *moveableView = [UIView new];
+        moveableView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.4];
+        _moveGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(movePosition)];
+        [moveableView addGestureRecognizer:_moveGesture];
+        
+        UIView *scalableView = [UIView new];
+        scalableView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.4];
+        _scaleGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(scale)];
+        [scalableView addGestureRecognizer:_scaleGesture];
         
         UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         resetBtn.backgroundColor = [UIColor darkGrayColor];
@@ -50,23 +55,54 @@ static DFLogView *_instance;
         [removeBtn setTitle:@"关闭" forState:UIControlStateNormal];
         removeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         
+        UITextField *searchTF = [UITextField new];
+        searchTF.placeholder = @"搜索关键字";
+        searchTF.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        searchTF.delegate = self;
+        searchTF.returnKeyType = UIReturnKeySearch;
+        searchTF.clearButtonMode = UITextFieldViewModeAlways;
+        searchTF.leftViewMode = UITextFieldViewModeAlways;
+        _searchTF = searchTF;
+        
+        UILabel *leftLabel = [UILabel new];
+        leftLabel.font = [UIFont systemFontOfSize:10];
+        leftLabel.textColor = [UIColor yellowColor];
+        searchTF.leftView = leftLabel;
+        
+        UITextView *textView = [UITextView new];
+        textView.font = [UIFont boldSystemFontOfSize:12];
+        textView.textColor = [UIColor blackColor];
+        textView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.4];
+        textView.editable = NO;
+        [self addSubview:textView];
+        _textView = textView;
+        
+        [self addSubview:moveableView];
         [self addSubview:resetBtn];
         [self addSubview:updateBtn];
         [self addSubview:removeBtn];
-        [self addSubview:scaleBtn];
+        [self addSubview:searchTF];
+        [self addSubview:scalableView];
         
-        [scaleBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        [scalableView mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.height.mas_equalTo(30);
-            make.width.equalTo(updateBtn);
-            make.left.equalTo(self).offset(10);
-            make.top.equalTo(self).offset(10);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+            make.right.bottom.equalTo(self);
+        }];
+    
+        [moveableView mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.left.top.equalTo(self);
+            make.width.equalTo(self);
+            make.height.mas_equalTo(@(30 + 30));
         }];
         
         [updateBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.width.top.height.equalTo(resetBtn);
-            make.left.equalTo(scaleBtn.mas_right).offset(10);
+            make.height.mas_equalTo(30);
+            make.width.equalTo(@50).priorityHigh();
+            make.left.equalTo(self).offset(30);
+            make.bottom.equalTo(moveableView);
         }];
         
         [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -77,32 +113,15 @@ static DFLogView *_instance;
         
         [removeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.width.top.height.equalTo(scaleBtn);
+            make.width.top.height.equalTo(updateBtn);
             make.left.equalTo(resetBtn.mas_right).offset(10);
-            make.right.equalTo(self).offset(-10);
         }];
         
-        [[scaleBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(UIButton *x) {
+        [searchTF mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            x.selected = !x.selected;
-            if (x.selected) {
-                
-                [self mas_updateConstraints:^(MASConstraintMaker *make) {
-                    
-                    make.height.mas_equalTo(50);
-                }];
-            }
-            else
-                [self mas_updateConstraints:^(MASConstraintMaker *make) {
-                    
-                    make.height.mas_equalTo(400);
-                }];
-            
-            [UIView animateWithDuration:.2
-                             animations:^{
-                                 
-                                 [self layoutIfNeeded];
-                             }];
+            make.top.height.equalTo(updateBtn);
+            make.right.mas_equalTo(self);
+            make.left.mas_lessThanOrEqualTo(removeBtn.mas_right).offset(10);
         }];
         
         [[updateBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
@@ -124,19 +143,94 @@ static DFLogView *_instance;
             [self removeFromSuperview];
         }];
         
-        UITextView *textView = [UITextView new];
-        textView.font = [UIFont boldSystemFontOfSize:12];
-        textView.textColor = [UIColor blackColor];
-        [self addSubview:textView];
-        _textView = textView;
-        
         [textView mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.top.equalTo(self).offset(50).priorityHigh();
+            make.top.equalTo(self).offset(60).priorityHigh();
             make.left.right.bottom.equalTo(self);
         }];
     }
     return self;
+}
+
+- (void)movePosition {
+    
+    static CGPoint startPoint;
+    static CGRect startFrame;
+    switch (_moveGesture.state) {
+            
+        case UIGestureRecognizerStateBegan: {
+            
+            startPoint = [_moveGesture locationInView:self.superview];
+            startFrame = self.frame;
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged: {
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                CGPoint currentPoint = [_moveGesture locationInView:self.superview];
+                CGRect frame = startFrame;
+                frame.origin = CGPointMake(currentPoint.x - startPoint.x + startFrame.origin.x, currentPoint.y - startPoint.y + startFrame.origin.y);
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    self.frame = frame;
+                });
+            });
+            break;
+        }
+            
+        default:
+            break;
+    }
+}
+
+- (void)scale {
+    
+    static CGPoint startPoint;
+    static CGRect startFrame;
+    switch (_scaleGesture.state) {
+            
+        case UIGestureRecognizerStateBegan: {
+            
+            startPoint = [_scaleGesture locationInView:self.superview];
+            startFrame = self.frame;
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged: {
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                CGPoint currentPoint = [_scaleGesture locationInView:self.superview];
+                CGRect frame = startFrame;
+                
+                CGFloat toWidth = currentPoint.x - startFrame.origin.x;
+                if (toWidth < _scaleGesture.view.frame.size.width) {
+                    
+                    toWidth = _scaleGesture.view.frame.size.width;
+                }
+                
+                CGFloat toHeight = currentPoint.y - startFrame.origin.y;
+                if (toHeight < _scaleGesture.view.frame.size.height) {
+                    
+                    toHeight = _scaleGesture.view.frame.size.height;
+                }
+                
+                frame.size = CGSizeMake(toWidth, toHeight);
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    self.frame = frame;
+                });
+            });
+            break;
+        }
+            
+        default:
+            break;
+    }
 }
 
 - (void)show
@@ -145,11 +239,7 @@ static DFLogView *_instance;
     
     [keyWindow addSubview:self];
     
-    [self mas_makeConstraints:^(MASConstraintMaker *make) {
-        
-        make.height.mas_equalTo(400);
-        make.right.left.top.equalTo(keyWindow);
-    }];
+    self.frame = CGRectMake(0, 0, keyWindow.frame.size.width, keyWindow.frame.size.height);
     
     [self updateContent];
 }
@@ -160,11 +250,54 @@ static DFLogView *_instance;
         
         NSString *logFilePath = [[DFLogManager shareLogManager] logsDirectory];
         NSData *logData = [NSData dataWithContentsOfFile:logFilePath];
-        NSString *logStr = [[NSString alloc] initWithData:logData encoding:NSUTF8StringEncoding];
+        _logStr = [[NSString alloc] initWithData:logData encoding:NSUTF8StringEncoding];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            _textView.text = logStr;
+            [self search:_searchTF.text];
+        });
+    });
+}
+
+- (void)search:(NSString *)keyStr {
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        NSMutableArray *ranges = [NSMutableArray array];
+        
+        NSRange range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(0, _logStr.length)];
+        while (range.length) {
+            
+            [ranges addObject:[NSValue valueWithRange:range]];
+            range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(range.length + range.location, _logStr.length - range.length - range.location)];
+        }
+        
+        NSMutableAttributedString *mAttr = [[NSMutableAttributedString alloc] initWithString:_logStr];
+        [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
+                               NSForegroundColorAttributeName: [UIColor blackColor],
+                               NSBackgroundColorAttributeName: [UIColor clearColor]} range:NSMakeRange(0, _logStr.length)];
+        for (NSValue *rangeValue in ranges) {
+            
+            [mAttr addAttributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:14],
+                                   NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[rangeValue rangeValue]];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            UILabel *leftLabel = (UILabel *)_searchTF.leftView;
+            _textView.attributedText = mAttr;
+            
+            if (ranges.count) {
+                
+                [_textView scrollRangeToVisible:[ranges[0] rangeValue]];
+                leftLabel.text = [NSString stringWithFormat:@"%lu条 ", (unsigned long)ranges.count];
+                [leftLabel sizeToFit];
+            }
+            else {
+                
+                [_textView scrollRangeToVisible:NSMakeRange(_logStr.length - 1, 1)];
+                leftLabel.text = @"";
+                [leftLabel sizeToFit];
+            }
         });
     });
 }
@@ -183,6 +316,15 @@ static DFLogView *_instance;
             [_instance updateContent];
         });
     });
+}
+
+#pragma mark - text field delegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    [self search:textField.text];
+    [textField resignFirstResponder];
+    
+    return YES;
 }
 
 /*

@@ -26,7 +26,7 @@ static DFLogManager *_instance;
     {
         DDFileLogger *fileLogger = [[DDFileLogger alloc] initWithLogFileManager:self];
         _fileLogger = fileLogger;
-        fileLogger.maximumFileSize = 10000;
+        fileLogger.maximumFileSize = 100000;
         
         //文件保存
         [DDLog addLogger:fileLogger];

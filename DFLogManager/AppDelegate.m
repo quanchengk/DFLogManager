@@ -20,7 +20,7 @@ void UncaughtExceptionHandler(NSException *exception) {
     NSString *reason = [exception reason];//非常重要，就是崩溃的原因
     NSString *name = [exception name];//异常类型
     
-    addLogText(@"exception type : %@ \n crash reason : %@ \n call stack info : %@", name, reason, arr);
+    addLogText(@"exception type : %@ \n crash reason : %@ \n", name, reason);
 }
 
 @interface AppDelegate ()

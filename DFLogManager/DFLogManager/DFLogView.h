@@ -9,9 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "DFLogManager.h"
 
-@interface DFLogView : UIView {
+@interface DFLogView : UIView <UITextFieldDelegate> {
     
+    NSString *_logStr;
+    UITextField *_searchTF;
     UITextView *_textView;
+    
+    UIPanGestureRecognizer *_moveGesture;
+    UIPanGestureRecognizer *_scaleGesture;
 }
 
 /**
