@@ -13,10 +13,15 @@
     
     NSString *_logStr;
     UITextField *_searchTF;
+    UIButton *_preBtn;
+    UIButton *_nextBtn;
     UITextView *_textView;
     
     UIPanGestureRecognizer *_moveGesture;
     UIPanGestureRecognizer *_scaleGesture;
+    
+    NSValue *_selectRange;
+    NSMutableArray *_searchRanges;
 }
 
 /**

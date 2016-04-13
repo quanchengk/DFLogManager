@@ -45,11 +45,6 @@ static DFLogView *_instance;
         [resetBtn setTitle:@"清空" forState:UIControlStateNormal];
         resetBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         
-        UIButton *updateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        updateBtn.backgroundColor = [UIColor darkGrayColor];
-        [updateBtn setTitle:@"更新" forState:UIControlStateNormal];
-        updateBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-        
         UIButton *removeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         removeBtn.backgroundColor = [UIColor redColor];
         [removeBtn setTitle:@"关闭" forState:UIControlStateNormal];
@@ -69,6 +64,20 @@ static DFLogView *_instance;
         leftLabel.textColor = [UIColor yellowColor];
         searchTF.leftView = leftLabel;
         
+        UIButton *preBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [preBtn setTitle:@"<" forState:UIControlStateNormal];
+        [preBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [preBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
+        preBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12];
+        _preBtn = preBtn;
+        
+        UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [nextBtn setTitle:@">" forState:UIControlStateNormal];
+        [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [nextBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
+        nextBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12];
+        _nextBtn = nextBtn;
+        
         UITextView *textView = [UITextView new];
         textView.font = [UIFont boldSystemFontOfSize:12];
         textView.textColor = [UIColor blackColor];
@@ -79,9 +88,10 @@ static DFLogView *_instance;
         
         [self addSubview:moveableView];
         [self addSubview:resetBtn];
-        [self addSubview:updateBtn];
         [self addSubview:removeBtn];
         [self addSubview:searchTF];
+        [self addSubview:preBtn];
+        [self addSubview:nextBtn];
         [self addSubview:scalableView];
         
         [scalableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -97,7 +107,7 @@ static DFLogView *_instance;
             make.height.mas_equalTo(@(30 + 30));
         }];
         
-        [updateBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.height.mas_equalTo(30);
             make.width.equalTo(@50).priorityHigh();
@@ -105,28 +115,32 @@ static DFLogView *_instance;
             make.bottom.equalTo(moveableView);
         }];
         
-        [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.width.top.height.equalTo(removeBtn);
-            make.left.equalTo(updateBtn.mas_right).offset(10);
-        }];
-        
         [removeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.width.top.height.equalTo(updateBtn);
+            make.width.top.height.equalTo(resetBtn);
             make.left.equalTo(resetBtn.mas_right).offset(10);
         }];
         
         [searchTF mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.top.height.equalTo(updateBtn);
-            make.right.mas_equalTo(self);
+            make.top.height.equalTo(resetBtn);
+            make.right.equalTo(preBtn.mas_left);
             make.left.mas_lessThanOrEqualTo(removeBtn.mas_right).offset(10);
         }];
         
-        [[updateBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
+        [preBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            [self updateContent];
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+            make.left.equalTo(searchTF.mas_right);
+            make.centerY.equalTo(removeBtn);
+        }];
+        
+        [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+            make.left.equalTo(preBtn.mas_right);
+            make.right.equalTo(self);
+            make.centerY.equalTo(removeBtn);
         }];
         
         [[resetBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
@@ -143,14 +157,49 @@ static DFLogView *_instance;
             [self removeFromSuperview];
         }];
         
+        [[preBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
+            
+            if (!preBtn.selected) {
+                
+                NSInteger index = [_searchRanges indexOfObject:_selectRange];
+                
+                if (--index >= 0) {
+                    
+                    _selectRange = _searchRanges[index];
+                    [self selectIndex:index];
+                }
+            }
+        }];
+        
+        [[nextBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
+            
+            if (!nextBtn.selected) {
+                
+                NSInteger index = [_searchRanges indexOfObject:_selectRange];
+                
+                if (++index < _searchRanges.count) {
+                    
+                    _selectRange = _searchRanges[index];
+                    [self selectIndex:index];
+                }
+            }
+        }];
+        
+        preBtn.selected = YES;
+        nextBtn.selected = YES;
+        
         [textView mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.top.equalTo(self).offset(60).priorityHigh();
             make.left.right.bottom.equalTo(self);
         }];
+        
+        _searchRanges = [NSMutableArray array];
     }
     return self;
 }
+
+#pragma mark - action
 
 - (void)movePosition {
     
@@ -263,12 +312,12 @@ static DFLogView *_instance;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        NSMutableArray *ranges = [NSMutableArray array];
+        [_searchRanges removeAllObjects];
         
         NSRange range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(0, _logStr.length)];
         while (range.length) {
             
-            [ranges addObject:[NSValue valueWithRange:range]];
+            [_searchRanges addObject:[NSValue valueWithRange:range]];
             range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(range.length + range.location, _logStr.length - range.length - range.location)];
         }
         
@@ -276,7 +325,7 @@ static DFLogView *_instance;
         [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
                                NSForegroundColorAttributeName: [UIColor blackColor],
                                NSBackgroundColorAttributeName: [UIColor clearColor]} range:NSMakeRange(0, _logStr.length)];
-        for (NSValue *rangeValue in ranges) {
+        for (NSValue *rangeValue in _searchRanges) {
             
             [mAttr addAttributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:14],
                                    NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[rangeValue rangeValue]];
@@ -286,20 +335,33 @@ static DFLogView *_instance;
             UILabel *leftLabel = (UILabel *)_searchTF.leftView;
             _textView.attributedText = mAttr;
             
-            if (ranges.count) {
+            if (_searchRanges.count) {
                 
-                [_textView scrollRangeToVisible:[ranges[0] rangeValue]];
-                leftLabel.text = [NSString stringWithFormat:@"%lu条 ", (unsigned long)ranges.count];
-                [leftLabel sizeToFit];
+                _selectRange = _searchRanges[0];
+                [self selectIndex:0];
             }
             else {
                 
                 [_textView scrollRangeToVisible:NSMakeRange(_logStr.length - 1, 1)];
                 leftLabel.text = @"";
                 [leftLabel sizeToFit];
+                
+                _preBtn.selected = YES;
+                _nextBtn.selected = YES;
             }
         });
     });
+}
+
+- (void)selectIndex:(NSInteger)index {
+    
+    _preBtn.selected = index == 0;
+    _nextBtn.selected = index == _searchRanges.count - 1;
+    
+    UILabel *leftLabel = (UILabel *)_searchTF.leftView;
+    [_textView scrollRangeToVisible:[_searchRanges[index] rangeValue]];
+    leftLabel.text = [NSString stringWithFormat:@"%ld/%lu条 ", (long)index + 1, (unsigned long)_searchRanges.count];
+    [leftLabel sizeToFit];
 }
 
 + (void)addLogText:(NSString *)logStr
