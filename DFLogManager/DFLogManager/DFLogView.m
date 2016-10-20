@@ -26,16 +26,14 @@ static DFLogView *_instance;
 {
     if (self = [super init]) {
         
-        self.alpha = .7;
-        self.backgroundColor = [UIColor clearColor];
         self.clipsToBounds = YES;
         
-        UIView *moveableView = [UIView new];
-        moveableView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.4];
+        UIView *moveableView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 60)];
+        moveableView.backgroundColor = [UIColor blueColor];
         _moveGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(movePosition)];
         [moveableView addGestureRecognizer:_moveGesture];
         
-        UIView *scalableView = [UIView new];
+        UIView *scalableView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x - 30, self.frame.origin.y - 30, 30, 30)];
         scalableView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.4];
         _scaleGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(scale)];
         [scalableView addGestureRecognizer:_scaleGesture];
@@ -43,45 +41,46 @@ static DFLogView *_instance;
         UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         resetBtn.backgroundColor = [UIColor darkGrayColor];
         [resetBtn setTitle:@"清空" forState:UIControlStateNormal];
-        resetBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        resetBtn.titleLabel.font = [UIFont systemFontOfSize:14];
         
         UIButton *removeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         removeBtn.backgroundColor = [UIColor redColor];
         [removeBtn setTitle:@"关闭" forState:UIControlStateNormal];
-        removeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        removeBtn.titleLabel.font = [UIFont systemFontOfSize:14];
         
         UITextField *searchTF = [UITextField new];
+        searchTF.backgroundColor = [UIColor whiteColor];
         searchTF.placeholder = @"搜索关键字";
         searchTF.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        searchTF.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         searchTF.delegate = self;
         searchTF.returnKeyType = UIReturnKeySearch;
         searchTF.clearButtonMode = UITextFieldViewModeAlways;
         searchTF.leftViewMode = UITextFieldViewModeAlways;
+        searchTF.textAlignment = NSTextAlignmentCenter;
         _searchTF = searchTF;
         
         UILabel *leftLabel = [UILabel new];
-        leftLabel.font = [UIFont systemFontOfSize:10];
-        leftLabel.textColor = [UIColor yellowColor];
+        leftLabel.font = [UIFont systemFontOfSize:12];
+        leftLabel.textColor = [UIColor darkGrayColor];
         searchTF.leftView = leftLabel;
         
         UIButton *preBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [preBtn setTitle:@"<" forState:UIControlStateNormal];
-        [preBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [preBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
+        [preBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         preBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12];
         _preBtn = preBtn;
         
         UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [nextBtn setTitle:@">" forState:UIControlStateNormal];
-        [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [nextBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
+        [nextBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         nextBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12];
         _nextBtn = nextBtn;
         
         UITextView *textView = [UITextView new];
         textView.font = [UIFont boldSystemFontOfSize:12];
         textView.textColor = [UIColor blackColor];
-        textView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.4];
+        textView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.7];
         textView.editable = NO;
         [self addSubview:textView];
         _textView = textView;
@@ -94,105 +93,24 @@ static DFLogView *_instance;
         [self addSubview:nextBtn];
         [self addSubview:scalableView];
         
-        [scalableView mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.size.mas_equalTo(CGSizeMake(30, 30));
-            make.right.bottom.equalTo(self);
-        }];
+        resetBtn.frame = CGRectMake(30, moveableView.frame.size.height - 30, 50, 30);
         
-        [moveableView mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.left.top.equalTo(self);
-            make.width.equalTo(self);
-            make.height.mas_equalTo(@(30 + 30));
-        }];
+        removeBtn.frame = CGRectMake(resetBtn.frame.size.width + resetBtn.frame.origin.x + 10, resetBtn.frame.origin.y, resetBtn.frame.size.width, resetBtn.frame.size.height);
         
-        [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.height.mas_equalTo(30);
-            make.width.equalTo(@50).priorityHigh();
-            make.left.equalTo(self).offset(30);
-            make.bottom.equalTo(moveableView);
-        }];
+        searchTF.frame = CGRectMake(150, resetBtn.frame.origin.y, 150, resetBtn.frame.size.height);
+        preBtn.frame = CGRectMake(searchTF.frame.size.width + searchTF.frame.origin.x, resetBtn.frame.origin.y, 30, 30);
+        nextBtn.frame = CGRectMake(preBtn.frame.size.width + preBtn.frame.origin.x, resetBtn.frame.origin.y, 30, 30);
+        textView.frame = CGRectMake(0, moveableView.frame.origin.y + moveableView.frame.size.height, self.frame.size.width, self.frame.size.height - moveableView.frame.origin.y - moveableView.frame.size.height);
         
-        [removeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.width.top.height.equalTo(resetBtn);
-            make.left.equalTo(resetBtn.mas_right).offset(10);
-        }];
+        self.autoresizesSubviews = YES;
+        moveableView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        scalableView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
+        textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        [searchTF mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.top.height.equalTo(resetBtn);
-            make.right.equalTo(preBtn.mas_left);
-            make.left.mas_lessThanOrEqualTo(removeBtn.mas_right).offset(10);
-        }];
-        
-        [preBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.size.mas_equalTo(CGSizeMake(30, 30));
-            make.left.equalTo(searchTF.mas_right);
-            make.centerY.equalTo(removeBtn);
-        }];
-        
-        [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.size.mas_equalTo(CGSizeMake(30, 30));
-            make.left.equalTo(preBtn.mas_right);
-            make.right.equalTo(self);
-            make.centerY.equalTo(removeBtn);
-        }];
-        
-        [[resetBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [[DFLogManager shareLogManager] reset];
-                [self updateContent];
-            });
-        }];
-        
-        [[removeBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-            
-            [self removeFromSuperview];
-        }];
-        
-        [[preBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-            
-            if (!preBtn.selected) {
-                
-                NSInteger index = [_searchRanges indexOfObject:_selectRange];
-                
-                if (--index >= 0) {
-                    
-                    _selectRange = _searchRanges[index];
-                    [self selectIndex:index];
-                }
-            }
-        }];
-        
-        [[nextBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-            
-            if (!nextBtn.selected) {
-                
-                NSInteger index = [_searchRanges indexOfObject:_selectRange];
-                
-                if (++index < _searchRanges.count) {
-                    
-                    _selectRange = _searchRanges[index];
-                    [self selectIndex:index];
-                }
-            }
-        }];
-        
-        preBtn.selected = YES;
-        nextBtn.selected = YES;
-        
-        [textView mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.top.equalTo(self).offset(60).priorityHigh();
-            make.left.right.bottom.equalTo(self);
-        }];
+        [resetBtn addTarget:self action:@selector(reset) forControlEvents:UIControlEventTouchUpInside];
+        [removeBtn addTarget:self action:@selector(remove) forControlEvents:UIControlEventTouchUpInside];
+        [preBtn addTarget:self action:@selector(clickPre) forControlEvents:UIControlEventTouchUpInside];
+        [nextBtn addTarget:self action:@selector(clickNext) forControlEvents:UIControlEventTouchUpInside];
         
         _searchRanges = [NSMutableArray array];
     }
@@ -200,6 +118,42 @@ static DFLogView *_instance;
 }
 
 #pragma mark - action
+- (void)reset {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [[DFLogManager shareLogManager] reset];
+        [self updateContent];
+    });
+}
+
+- (void)remove {
+    
+    [self removeFromSuperview];
+}
+
+- (void)clickPre {
+    
+    NSInteger index = [_searchRanges indexOfObject:_selectRange];
+    
+    if (--index < 0) {
+        
+        index = _searchRanges.count - 1;
+    }
+    [self selectIndex:index];
+}
+
+- (void)clickNext {
+    
+    NSInteger index = [_searchRanges indexOfObject:_selectRange];
+    
+    if (++index >= _searchRanges.count) {
+        
+        index = 0;
+    }
+    
+    [self selectIndex:index];
+}
 
 - (void)movePosition {
     
@@ -305,12 +259,15 @@ static DFLogView *_instance;
     
     [_searchRanges removeAllObjects];
     
-    NSRange range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(0, _logStr.length)];
-    while (range.length) {
+    NSRange range = NSMakeRange(0, 0);
+    do {
         
-        [_searchRanges addObject:[NSValue valueWithRange:range]];
         range = [_logStr rangeOfString:keyStr options:NSCaseInsensitiveSearch range:NSMakeRange(range.length + range.location, _logStr.length - range.length - range.location)];
-    }
+        if (range.length) {
+            
+            [_searchRanges addObject:[NSValue valueWithRange:range]];
+        }
+    } while (range.length);
     
     NSMutableAttributedString *mAttr = [[NSMutableAttributedString alloc] initWithString:_logStr];
     [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
@@ -318,15 +275,15 @@ static DFLogView *_instance;
                            NSBackgroundColorAttributeName: [UIColor clearColor]} range:NSMakeRange(0, _logStr.length)];
     for (NSValue *rangeValue in _searchRanges) {
         
-        [mAttr addAttributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:14],
+        [mAttr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14],
                                NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[rangeValue rangeValue]];
     }
     UILabel *leftLabel = (UILabel *)_searchTF.leftView;
-    _textView.attributedText = mAttr;
+    _logAttr = mAttr;
+    _textView.attributedText = [mAttr copy];
     
     if (_searchRanges.count) {
         
-        _selectRange = _searchRanges[0];
         [self selectIndex:0];
     }
     else {
@@ -334,20 +291,42 @@ static DFLogView *_instance;
         [_textView scrollRangeToVisible:NSMakeRange(_logStr.length - 1, 1)];
         leftLabel.text = @"";
         [leftLabel sizeToFit];
-        
-        _preBtn.selected = YES;
-        _nextBtn.selected = YES;
     }
 }
 
 - (void)selectIndex:(NSInteger)index {
     
-    _preBtn.selected = index == 0;
-    _nextBtn.selected = index == _searchRanges.count - 1;
+    NSInteger preSelectRange = [_searchRanges indexOfObject:_selectRange];
+    _selectRange = _searchRanges[index];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        //文字变色
+        [_logAttr beginEditing];
+        //之前的文字颜色变正常
+        if (_searchRanges.count > preSelectRange) {
+            
+            [_logAttr setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
+                                      NSFontAttributeName : [UIFont systemFontOfSize:14],
+                                      NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[_searchRanges[preSelectRange] rangeValue]];
+        }
+        
+        //选中的文字颜色变红
+        [_logAttr setAttributes:@{NSForegroundColorAttributeName: [UIColor redColor],
+                                  NSFontAttributeName : [UIFont systemFontOfSize:17],
+                                  NSBackgroundColorAttributeName: [UIColor yellowColor]} range:[_selectRange rangeValue]];
+        [_logAttr endEditing];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            _textView.attributedText = [_logAttr copy];
+            [_textView scrollRangeToVisible:[_selectRange rangeValue]];
+        });
+    });
     
     UILabel *leftLabel = (UILabel *)_searchTF.leftView;
-    [_textView scrollRangeToVisible:[_searchRanges[index] rangeValue]];
     leftLabel.text = [NSString stringWithFormat:@"%ld/%lu条 ", (long)index + 1, (unsigned long)_searchRanges.count];
+    
     [leftLabel sizeToFit];
 }
 
@@ -377,11 +356,11 @@ static DFLogView *_instance;
 }
 
 /*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect {
- // Drawing code
- }
- */
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
 
 @end

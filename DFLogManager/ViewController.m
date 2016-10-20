@@ -23,10 +23,12 @@
     
     [_crachBtn addTarget:self action:@selector(crachTest) forControlEvents:UIControlEventTouchUpInside];
     
-    [[_addBtn rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-        
-        addLogText(@"%@", [NSDate date]);
-    }];
+    [_addBtn addTarget:self action:@selector(logOut) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)logOut {
+    
+    addLogText(@"%@", [NSDate date]);
 }
 
 - (void)viewDidAppear:(BOOL)animated

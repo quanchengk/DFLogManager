@@ -32,6 +32,9 @@ static DFLogManager *_instance;
         [DDLog addLogger:fileLogger];
         //控制台输出
         [DDLog addLogger:[DDTTYLogger sharedInstance]];
+        
+        self.logFilesDiskQuota = 0;
+        self.maximumNumberOfLogFiles = 0;
     }
     return self;
 }

@@ -12,6 +12,7 @@
 @interface DFLogView : UIView <UITextFieldDelegate> {
     
     NSString *_logStr;
+    NSMutableAttributedString *_logAttr;
     UITextField *_searchTF;
     UIButton *_preBtn;
     UIButton *_nextBtn;
