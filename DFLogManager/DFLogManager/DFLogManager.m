@@ -7,8 +7,18 @@
 //
 
 #import "DFLogManager.h"
+#import "DFLogModel.h"
+#import "DFLogView.h"
 
 @implementation DFLogManager
+
+void UncaughtExceptionHandler(NSException *exception) {
+    NSArray *arr = [exception callStackSymbols];//得到当前调用栈信息
+    NSString *reason = [exception reason];//非常重要，就是崩溃的原因
+    NSString *name = [exception name];//异常类型
+    
+    [[DFLogManager shareLogManager] updateSelector:[NSString stringWithFormat:@"系统闪退：%@", name] request:reason response:arr error:[NSError errorWithDomain:[DFLogManager stringWithJsonValue:exception.userInfo] code:1 userInfo:nil]];
+}
 
 static DFLogManager *_instance;
 + (instancetype)shareLogManager
@@ -20,106 +30,140 @@ static DFLogManager *_instance;
     return _instance;
 }
 
-- (id)init
-{
-    if ((self = [super init]))
-    {
-        DDFileLogger *fileLogger = [[DDFileLogger alloc] initWithLogFileManager:self];
-        _fileLogger = fileLogger;
-        fileLogger.maximumFileSize = 100000;
+- (instancetype)init {
+    
+    if (self = [super init]) {
         
-        //文件保存
-        [DDLog addLogger:fileLogger];
-        //控制台输出
-        [DDLog addLogger:[DDTTYLogger sharedInstance]];
+        NSString *fileStr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        NSURL *url = [[[NSURL fileURLWithPath:fileStr] URLByAppendingPathComponent:@"Debug"] URLByAppendingPathExtension:@"realm"];
+        _realm = [RLMRealm realmWithURL:url];
         
-        self.logFilesDiskQuota = 0;
-        self.maximumNumberOfLogFiles = 0;
+        //开启错误日志
+        NSSetUncaughtExceptionHandler(&UncaughtExceptionHandler);
+        
+        _maxLogerCount = 5;
     }
+    
     return self;
 }
 
-- (NSString *)logsDirectory
-{
-    NSString *path =  [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+- (void)updateSelector:(NSString *)selector
+               request:(id)request
+              response:(id)response
+                 error:(NSError *)error {
     
-    NSString *logPath = [path stringByAppendingPathComponent:@"log"];
+    DFLogView *logerView = [DFLogView shareLogView];
     
-    NSFileManager *fileManger = [NSFileManager defaultManager];
+    //    产生时间
+    NSNumber *maxRequestID = [[DFLogModel allObjectsInRealm:_realm] maxOfProperty:@"requestID"];
+    DFLogModel *model = [DFLogModel new];
+    model.requestID = [NSNumber numberWithInt:([maxRequestID intValue] + 1)];
+    model.selector = selector;
+    model.requestObject = [DFLogManager stringWithJsonValue:request];
+    model.responseObject = [DFLogManager stringWithJsonValue:response];
+    model.occurTime = [NSDate date];
     
-    if (![fileManger fileExistsAtPath:logPath]){
-        [fileManger createDirectoryAtPath:logPath withIntermediateDirectories:YES attributes:nil error:nil];
+    if (error && error.description.length) {
+        
+        model.error = [NSString stringWithFormat:@"错误日志：%@\n", error.description];
     }
     
-    return [logPath stringByAppendingPathComponent:@"run.log"];;
-}
-
-- (NSArray *)unsortedLogFilePaths
-{
-    return nil;
-}
-- (NSArray *)unsortedLogFileNames
-{
-    return  nil;
-}
-
-- (NSArray *)unsortedLogFileInfos
-{
-    return nil;
-}
-
-- (NSArray *)sortedLogFilePaths
-{
-    return nil;
-}
-
-- (NSArray *)sortedLogFileNames
-{
-    return nil;
-}
-
-- (NSArray *)sortedLogFileInfos
-{
-    return nil;
-}
-
-- (NSString *)createNewLogFile
-{
-    NSString *fulPath = [self logsDirectory];
-    
-    NSFileManager *fileManger = [NSFileManager defaultManager];
-    
-    BOOL isCreate = NO;
-    
-    if ([fileManger fileExistsAtPath:fulPath]) {
+    @try {
         
-        if([[fileManger attributesOfItemAtPath:fulPath error:nil] fileSize] > 100000){
-            [fileManger removeItemAtPath:fulPath error:nil];
-            isCreate = YES;
+        [_realm transactionWithBlock:^{
+            
+            [_realm addObject:model];
+        }];
+    } @catch (NSException *exception) {
+        
+        NSNumber *maxRequestID = [[DFLogModel allObjectsInRealm:_realm] maxOfProperty:@"requestID"];
+        //产生时间
+        DFLogModel *errorModel = [DFLogModel new];
+        errorModel.requestID = [NSNumber numberWithInt:([maxRequestID intValue] + 1)];
+        errorModel.selector = selector;
+        errorModel.error = [NSString stringWithFormat:@"realm插入错误：%@\n", exception];
+        errorModel.requestObject = [DFLogManager stringWithJsonValue:request];
+        errorModel.occurTime = [NSDate date];
+        
+        @try {
+            
+            [_realm transactionWithBlock:^{
+                
+                [_realm addObject:errorModel];
+            }];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+            [logerView add:errorModel];
+            [self setMaxLogerCount:_maxLogerCount];
         }
-    }else{
-        isCreate = YES;
+    } @finally {
+        
+        [logerView add:model];
+        [self setMaxLogerCount:_maxLogerCount];
     }
-    
-    if (isCreate) {
-        [fileManger createFileAtPath:fulPath contents:nil attributes:nil];
-    }
-    
-    return fulPath;
 }
 
-- (void)reset
-{
-    NSString *fulPath = [self logsDirectory];
+- (void)reset {
     
-    NSFileManager *fileManger = [NSFileManager defaultManager];
+    [self saveLogerCount:0];
+}
+
+- (void)setMaxLogerCount:(NSInteger)maxLogerCount {
     
-    if ([fileManger fileExistsAtPath:fulPath]) {
+    _maxLogerCount = maxLogerCount;
+    
+    [self saveLogerCount:maxLogerCount];
+}
+
+- (void)saveLogerCount:(NSInteger)index {
+    
+    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingProperty:@"requestID" ascending:NO];
+    
+    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    NSMutableArray *objects = [NSMutableArray array];
+    for (NSInteger i = result.count - 1; i >= index; i--) {
         
-        [fileManger removeItemAtPath:fulPath error:nil];
+        //多余的部分全部删掉
+        DFLogModel *model = [result objectAtIndex:i];
+        [objects addObject:model];
+        [indexSet addIndex:i];
     }
     
-    [fileManger createFileAtPath:fulPath contents:nil attributes:nil];
+    @try {
+        
+        [[DFLogView shareLogView] deleteIndexes:indexSet];
+        [_realm transactionWithBlock:^{
+            
+            [_realm deleteObjects:objects];
+        }];
+    } @catch (NSException *exception) {
+        
+        NSLog(@"%@", exception);
+    } @finally {
+        
+    }
+}
+
++ (NSString *)stringWithJsonValue:(id)obj
+{
+    if (!obj) {
+        
+        return @"";
+    }
+    else if ([obj isKindOfClass:[NSString class]]) {
+        
+        return obj;
+    }
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:&error];
+    if(error){
+        return obj;
+    }
+    NSString *str = [[NSString alloc]initWithData:jsondata encoding:NSUTF8StringEncoding];
+    
+    return str ? str : obj;
 }
 
 @end

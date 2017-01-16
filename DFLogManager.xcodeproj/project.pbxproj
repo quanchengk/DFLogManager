@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B3621672373B76D730EE11DF /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB93305A709493EBE79FBBCD /* libPods.a */; };
 		B3B46E701CAE5AF2002C43C5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B46E6F1CAE5AF2002C43C5 /* main.m */; };
 		B3B46E731CAE5AF2002C43C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B46E721CAE5AF2002C43C5 /* AppDelegate.m */; };
 		B3B46E761CAE5AF2002C43C5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B46E751CAE5AF2002C43C5 /* ViewController.m */; };
@@ -16,10 +15,13 @@
 		B3B46E7E1CAE5AF2002C43C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3B46E7C1CAE5AF2002C43C5 /* LaunchScreen.storyboard */; };
 		B3B46E911CAE6BCA002C43C5 /* DFLogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B46E8E1CAE6BCA002C43C5 /* DFLogManager.m */; };
 		B3B46E921CAE6BCA002C43C5 /* DFLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B46E901CAE6BCA002C43C5 /* DFLogView.m */; };
+		B3C227091E2CA4B400E7189C /* DFLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C227081E2CA4B400E7189C /* DFLogModel.m */; };
+		B6D64BBAC4A9CA94D3B9C6AE /* libPods-DFLogManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCE6602E9C580A63EC65398 /* libPods-DFLogManager.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6647918A181D1B0136134FD0 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		5BCE6602E9C580A63EC65398 /* libPods-DFLogManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DFLogManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		83B3100692105C38E71277A1 /* Pods-DFLogManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DFLogManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DFLogManager/Pods-DFLogManager.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B46E6B1CAE5AF2002C43C5 /* DFLogManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DFLogManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B46E6F1CAE5AF2002C43C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B3B46E711CAE5AF2002C43C5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -34,8 +36,9 @@
 		B3B46E8E1CAE6BCA002C43C5 /* DFLogManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFLogManager.m; sourceTree = "<group>"; };
 		B3B46E8F1CAE6BCA002C43C5 /* DFLogView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFLogView.h; sourceTree = "<group>"; };
 		B3B46E901CAE6BCA002C43C5 /* DFLogView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFLogView.m; sourceTree = "<group>"; };
-		C0A462C1E507198EDE98E9C3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		EB93305A709493EBE79FBBCD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C227071E2CA4B400E7189C /* DFLogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFLogModel.h; sourceTree = "<group>"; };
+		B3C227081E2CA4B400E7189C /* DFLogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFLogModel.m; sourceTree = "<group>"; };
+		B98E868CB6817348630F0DC4 /* Pods-DFLogManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DFLogManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-DFLogManager/Pods-DFLogManager.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,20 +46,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3621672373B76D730EE11DF /* libPods.a in Frameworks */,
+				B6D64BBAC4A9CA94D3B9C6AE /* libPods-DFLogManager.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		63C0C414087BC1B074FAE719 /* Pods */ = {
+		3DA8A70EC2905120A4C5C8D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C0A462C1E507198EDE98E9C3 /* Pods.debug.xcconfig */,
-				6647918A181D1B0136134FD0 /* Pods.release.xcconfig */,
+				5BCE6602E9C580A63EC65398 /* libPods-DFLogManager.a */,
 			);
-			name = Pods;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		B3B46E621CAE5AF2002C43C5 = {
@@ -64,8 +66,8 @@
 			children = (
 				B3B46E6D1CAE5AF2002C43C5 /* DFLogManager */,
 				B3B46E6C1CAE5AF2002C43C5 /* Products */,
-				63C0C414087BC1B074FAE719 /* Pods */,
-				F4D7F47A2799144A2F2F6210 /* Frameworks */,
+				CC1F1CCB4906F4BC09866744 /* Pods */,
+				3DA8A70EC2905120A4C5C8D4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,16 +111,19 @@
 				B3B46E8E1CAE6BCA002C43C5 /* DFLogManager.m */,
 				B3B46E8F1CAE6BCA002C43C5 /* DFLogView.h */,
 				B3B46E901CAE6BCA002C43C5 /* DFLogView.m */,
+				B3C227071E2CA4B400E7189C /* DFLogModel.h */,
+				B3C227081E2CA4B400E7189C /* DFLogModel.m */,
 			);
 			path = DFLogManager;
 			sourceTree = "<group>";
 		};
-		F4D7F47A2799144A2F2F6210 /* Frameworks */ = {
+		CC1F1CCB4906F4BC09866744 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				EB93305A709493EBE79FBBCD /* libPods.a */,
+				83B3100692105C38E71277A1 /* Pods-DFLogManager.debug.xcconfig */,
+				B98E868CB6817348630F0DC4 /* Pods-DFLogManager.release.xcconfig */,
 			);
-			name = Frameworks;
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,12 +133,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B46E821CAE5AF2002C43C5 /* Build configuration list for PBXNativeTarget "DFLogManager" */;
 			buildPhases = (
-				FCE8EB066619433E62B48B2F /* Check Pods Manifest.lock */,
+				385924599A9A3B3C123E11BE /* [CP] Check Pods Manifest.lock */,
 				B3B46E671CAE5AF2002C43C5 /* Sources */,
 				B3B46E681CAE5AF2002C43C5 /* Frameworks */,
 				B3B46E691CAE5AF2002C43C5 /* Resources */,
-				4F0B069C8F1041F59C6C1610 /* Embed Pods Frameworks */,
-				945A7EB801078240CA2A6D32 /* Copy Pods Resources */,
+				B99E5CF108F44C193E94E06D /* [CP] Embed Pods Frameworks */,
+				79799D2C6B58004C94278337 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -191,49 +196,49 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4F0B069C8F1041F59C6C1610 /* Embed Pods Frameworks */ = {
+		385924599A9A3B3C123E11BE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		945A7EB801078240CA2A6D32 /* Copy Pods Resources */ = {
+		79799D2C6B58004C94278337 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager/Pods-DFLogManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FCE8EB066619433E62B48B2F /* Check Pods Manifest.lock */ = {
+		B99E5CF108F44C193E94E06D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager/Pods-DFLogManager-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -247,6 +252,7 @@
 				B3B46E761CAE5AF2002C43C5 /* ViewController.m in Sources */,
 				B3B46E731CAE5AF2002C43C5 /* AppDelegate.m in Sources */,
 				B3B46E921CAE6BCA002C43C5 /* DFLogView.m in Sources */,
+				B3C227091E2CA4B400E7189C /* DFLogModel.m in Sources */,
 				B3B46E701CAE5AF2002C43C5 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -359,7 +365,7 @@
 		};
 		B3B46E831CAE5AF2002C43C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C0A462C1E507198EDE98E9C3 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 83B3100692105C38E71277A1 /* Pods-DFLogManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = N4QU3P3JZ2;
@@ -375,7 +381,7 @@
 		};
 		B3B46E841CAE5AF2002C43C5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6647918A181D1B0136134FD0 /* Pods.release.xcconfig */;
+			baseConfigurationReference = B98E868CB6817348630F0DC4 /* Pods-DFLogManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DFLogManager/Info.plist;

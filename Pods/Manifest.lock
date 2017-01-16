@@ -1,29 +1,20 @@
 PODS:
-  - CocoaLumberjack (2.2.0):
-    - CocoaLumberjack/Default (= 2.2.0)
-    - CocoaLumberjack/Extensions (= 2.2.0)
-  - CocoaLumberjack/Core (2.2.0)
-  - CocoaLumberjack/Default (2.2.0):
-    - CocoaLumberjack/Core
-  - CocoaLumberjack/Extensions (2.2.0):
-    - CocoaLumberjack/Default
-  - Masonry (0.6.4)
-  - ReactiveCocoa (2.5):
-    - ReactiveCocoa/UI (= 2.5)
-  - ReactiveCocoa/Core (2.5):
-    - ReactiveCocoa/no-arc
-  - ReactiveCocoa/no-arc (2.5)
-  - ReactiveCocoa/UI (2.5):
-    - ReactiveCocoa/Core
+  - Masonry (1.0.2)
+  - Realm (2.0.2):
+    - Realm/Headers (= 2.0.2)
+  - Realm/Headers (2.0.2)
+  - UITableView+FDTemplateLayoutCell (1.4)
 
 DEPENDENCIES:
-  - CocoaLumberjack (~> 2.2.0)
-  - Masonry (~> 0.6.2)
-  - ReactiveCocoa
+  - Masonry
+  - Realm
+  - UITableView+FDTemplateLayoutCell
 
 SPEC CHECKSUMS:
-  CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
-  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
-  ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  Realm: 0f5a194af0b7e6158b83db41b4ee1a00be7ddf1a
+  UITableView+FDTemplateLayoutCell: 234e1582bcc4e18461af91155123bb96538ed030
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: b15d6c6659bf7c201f137ab0a8a508921f1edd88
+
+COCOAPODS: 1.1.1

@@ -4,22 +4,22 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>CocoaLumberjack.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Masonry.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods.xcscheme</key>
+		<key>Pods-DFLogManager.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>ReactiveCocoa.xcscheme</key>
+		<key>Realm.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UITableView+FDTemplateLayoutCell.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -27,7 +27,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>12E2BC28C62976C425F4B71C2723F0B1</key>
+		<key>3726AE577E141F5CFAE439C5E122414A</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -37,12 +37,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8D65A08864C1CA3E6CDCF9287FB95186</key>
+		<key>D6CE8344BB71D465BBCB9A61407367E6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BAC934498B926B30E2C0212CF5F5A0E8</key>
+		<key>FF32DA671A7B28869EDF47DDD17E60B7</key>
 		<dict>
 			<key>primary</key>
 			<true/>

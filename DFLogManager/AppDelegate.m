@@ -7,21 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "DFLogView.h"
-
-/**
- *  崩溃日志记录
- *
- *  @param exception 崩溃对象
- */
-void UncaughtExceptionHandler(NSException *exception) {
-    
-    NSArray *arr = [exception callStackSymbols];//得到当前调用栈信息
-    NSString *reason = [exception reason];//非常重要，就是崩溃的原因
-    NSString *name = [exception name];//异常类型
-    
-    addLogText(@"exception type : %@ \n crash reason : %@ \n", name, reason);
-}
+#import "DFLogManager.h"
 
 @interface AppDelegate ()
 
@@ -40,11 +26,8 @@ void UncaughtExceptionHandler(NSException *exception) {
 
 - (void)initLog
 {
-    //崩溃日志注册
-    NSSetUncaughtExceptionHandler(&UncaughtExceptionHandler);
-    
-    //开启DDLOG日志记录
-    [DFLogManager shareLogManager];
+    // 只保留最新的x条
+    [DFLogManager shareLogManager].maxLogerCount = 30;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

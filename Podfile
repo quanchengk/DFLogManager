@@ -1,5 +1,8 @@
-platform :ios, "6.0"
+platform :ios, "8.0"
 
-pod 'ReactiveCocoa'
-pod 'Masonry', '~> 0.6.2'
-pod 'CocoaLumberjack', '~> 2.2.0'
+target ‘DFLogManager’ do
+    
+    pod 'Masonry'
+    pod 'Realm'
+    pod 'UITableView+FDTemplateLayoutCell'
+end

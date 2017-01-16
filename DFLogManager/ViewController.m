@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "DFLogManager.h"
 #import "DFLogView.h"
 
 @interface ViewController ()
@@ -28,16 +29,16 @@
 
 - (void)logOut {
     
-    addLogText(@"%@", [NSDate date]);
+    [[DFLogManager shareLogManager] updateSelector:[NSString stringWithFormat:@"加入方法%s", __func__] request:@{@"key": @"请求体"} response:@{@"key": @"数据回参"} error:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    addLogText(@"页面展示");
+    [[DFLogManager shareLogManager] updateSelector:[NSString stringWithFormat:@"页面展示%s", __func__] request:@{@"key": @"请求体"} response:@{@"key": @"数据回参"} error:nil];
     
-    [[DFLogView shareLogView] performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+    [[DFLogView shareLogView] show];
 }
 
 - (void)didReceiveMemoryWarning {

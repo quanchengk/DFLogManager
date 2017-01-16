@@ -7,23 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CocoaLumberjack.h>
+#import <Realm/Realm.h>
 
-#define addLogText(fmt, ...) [DFLogView addLogText:[NSString stringWithFormat:@"File:%s, \nLine:%d, \nFunction:%s, \nContent:%@\n", __FILE__, __LINE__ ,__FUNCTION__, [NSString stringWithFormat:fmt,##__VA_ARGS__]]]
-
-static const int ddLogLevel = DDLogLevelVerbose;
-
-@interface DFLogManager : NSObject <DDLogFileManager>
-{
-    DDFileLogger *_fileLogger;
-}
+@interface DFLogManager : NSObject
 
 + (instancetype)shareLogManager;
 
-//archived的最大次数，超过则把最开始archived的内容删掉
-@property (readwrite, assign, atomic) NSUInteger maximumNumberOfLogFiles;
-@property (readwrite, assign, atomic) unsigned long long logFilesDiskQuota;
+@property (retain, nonatomic, readonly) RLMRealm *realm;
+//记录的最大条数，默认为50条，考虑到性能问题，插入数据时的要跟着刷新ui，所以运行时不实时删除，只在程序启动时过滤掉溢出的数据
+@property (assign, nonatomic) NSInteger maxLogerCount;
 
-- (NSString *)logsDirectory;
+- (void)updateSelector:(NSString *)selector
+               request:(id)request
+              response:(id)response
+                 error:(NSError *)error;
+
 - (void)reset;
 @end
