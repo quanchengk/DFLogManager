@@ -9,3 +9,5 @@
 Masonry（自动布局，如果不用autolayout）
 Realm（快速的数据存储、读取）
 UITableView+FDTemplateLayoutCell（和自动布局搭配，用于展示列表，自动填充高度）
+
+下载demo查看具体使用。
