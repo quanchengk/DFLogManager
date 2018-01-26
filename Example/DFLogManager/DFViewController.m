@@ -7,6 +7,7 @@
 //
 
 #import "DFViewController.h"
+#import "DFLogManager.h"
 
 @interface DFViewController ()
 
@@ -18,6 +19,12 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    DFLogModel *logModel = [DFLogModel new];
+    logModel.selector = @"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试";
+    logModel.requestObject = @"请求方法";
+    logModel.responseObject = @"回参";
+//    logModel.error = @"错误";
+    [[DFLogManager shareLogManager] addLogModel:logModel];
 }
 
 - (void)didReceiveMemoryWarning

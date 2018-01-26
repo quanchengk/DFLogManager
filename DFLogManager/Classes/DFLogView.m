@@ -45,7 +45,7 @@
     
     _model = model;
     
-    NSString *contentStr = [NSString stringWithFormat:@"%@==>：\n%@\n<==：\n%@\n==end==", model.error.length ? model.error : @"", model.requestObject, model.responseObject.length ? model.responseObject : @"无"];
+    NSString *contentStr = [NSString stringWithFormat:@"%@\n%@\n%@\n==end==", model.requestObject, model.responseObject.length ? model.responseObject : @"无", model.error.length ? model.error : @""];
     _content.text = contentStr;
     [self layoutIfNeeded];
 }
@@ -84,6 +84,7 @@
         titleLB.font = [UIFont systemFontOfSize:12];
         titleLB.textColor = [UIColor blackColor];
         titleLB.numberOfLines = 0;
+        titleLB.preferredMaxLayoutWidth = DFScreenWidth - 20 - 15 - 10 - 100;
         _titleLB = titleLB;
         [self.contentView addSubview:titleLB];
         
@@ -100,14 +101,14 @@
         [titleLB mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.left.equalTo(self.contentView).offset(15);
-            make.top.equalTo(self.contentView).offset(0);
-            make.bottom.equalTo(self.contentView).offset(-0);
-            make.right.mas_lessThanOrEqualTo(_timeLB.mas_left).offset(-10);
+            make.top.equalTo(self.contentView).offset(5);
+            make.bottom.equalTo(self.contentView).offset(-5);
+            make.right.offset(-110);
         }];
         
         [_timeLB mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.equalTo(self.contentView).offset(-15);
-            make.top.equalTo(titleLB).offset(8);
+            make.top.equalTo(titleLB);
         }];
         
         [_bgBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -135,9 +136,8 @@
     dateF.dateFormat = @"MM-dd HH:mm:ss";
     _timeLB.text = [dateF stringFromDate:model.occurTime];
     [_timeLB sizeToFit];
-    _titleLB.text = model.selector;
     
-    _titleLB.preferredMaxLayoutWidth = DFScreenWidth - 20 - 15 - 15 - 10 - _timeLB.frame.size.width;
+    _titleLB.text = model.selector;
     
     if (model.error.length) {
         
@@ -146,6 +146,8 @@
     else
         
         self.contentView.backgroundColor = [UIColor whiteColor];
+    
+    [self layoutIfNeeded];
 }
 
 - (void)click {
@@ -448,7 +450,7 @@ static DFLogView *_instance;
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
-    CLILogerTableViewHeader *header = [[CLILogerTableViewHeader alloc] initWithReuseIdentifier:@"CLILogerTableViewHeader"];
+    CLILogerTableViewHeader *header = [tableView dequeueReusableHeaderFooterViewWithIdentifier:@"CLILogerTableViewHeader"];
     header.model = _items[section];
     header.delegate = self;
     return header;
@@ -456,7 +458,10 @@ static DFLogView *_instance;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     
-    return 50;
+    CLILogerTableViewHeader *header = [tableView dequeueReusableHeaderFooterViewWithIdentifier:@"CLILogerTableViewHeader"];
+    header.model = _items[section];
+    CGFloat height = [header systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    return height;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
