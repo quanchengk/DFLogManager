@@ -1,0 +1,14 @@
+use_frameworks!
+
+target 'DFLogManager_Example' do
+  pod 'DFLogManager', :path => '../'
+
+  target 'DFLogManager_Tests' do
+    inherit! :search_paths
+
+    pod 'Specta'
+    pod 'Expecta'
+    pod 'FBSnapshotTestCase'
+    pod 'Expecta+Snapshots'
+  end
+end

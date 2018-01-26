@@ -1,13 +1,29 @@
 # DFLogManager
-崩溃日志&系统日志控件
 
-控件提供了监听系统闪退、信息本地记录的功能，协助项目测试、排错。
+[![CI Status](http://img.shields.io/travis/acct<blob>=0xE585A8E7A88BE681BA/DFLogManager.svg?style=flat)](https://travis-ci.org/acct<blob>=0xE585A8E7A88BE681BA/DFLogManager)
+[![Version](https://img.shields.io/cocoapods/v/DFLogManager.svg?style=flat)](http://cocoapods.org/pods/DFLogManager)
+[![License](https://img.shields.io/cocoapods/l/DFLogManager.svg?style=flat)](http://cocoapods.org/pods/DFLogManager)
+[![Platform](https://img.shields.io/cocoapods/p/DFLogManager.svg?style=flat)](http://cocoapods.org/pods/DFLogManager)
 
-可以收缩、展开列表详情，允许拖拽、缩放视图，不遮挡视线，即用即开。
+## Example
 
-需要导入一下框架：
-Masonry（自动布局，如果不用autolayout）
-Realm（快速的数据存储、读取）
-UITableView+FDTemplateLayoutCell（和自动布局搭配，用于展示列表，自动填充高度）
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-下载demo查看具体使用。
+## Requirements
+
+## Installation
+
+DFLogManager is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+```ruby
+pod 'DFLogManager'
+```
+
+## Author
+
+danfort, quanchengk@163.com
+
+## License
+
+DFLogManager is available under the MIT license. See the LICENSE file for more info.
