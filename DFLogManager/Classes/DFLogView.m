@@ -202,7 +202,7 @@ static DFLogView *_instance;
         
         NSBundle *selfBundle = [NSBundle bundleForClass:[self class]];
         UIImageView *scalableView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        scalableView.image = [UIImage imageNamed:@"scale" inBundle:selfBundle compatibleWithTraitCollection:NULL];
+        scalableView.image = [UIImage imageNamed:@"df_scale" inBundle:selfBundle compatibleWithTraitCollection:NULL];
         scalableView.contentMode = UIViewContentModeScaleAspectFit;
         scalableView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.6];
         scalableView.userInteractionEnabled = YES;
