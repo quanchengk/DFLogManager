@@ -17,9 +17,22 @@ static CGFloat circleWidth = 32;
 @interface DFLogCircleView ()
 
 @property (retain, nonatomic) UIButton *circleBtn;
+@property (retain, nonatomic) UIActivityIndicatorView *indicatorView;
 @end
 
 @implementation DFLogCircleView
+
+- (UIActivityIndicatorView *)indicatorView {
+    
+    if (!_indicatorView) {
+        _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        _indicatorView.hidesWhenStopped = YES;
+        [self addSubview:_indicatorView];
+        
+        _indicatorView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+    }
+    return _indicatorView;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame {
     
@@ -87,17 +100,17 @@ static CGFloat circleWidth = 32;
                   initialSpringVelocity:.2
                                 options:UIViewAnimationOptionCurveEaseIn
                              animations:^{
-                
-                self.frame = frame;
-            } completion:^(BOOL finished) {
-                
-            }];
+                                 
+                                 self.frame = frame;
+                             } completion:^(BOOL finished) {
+                                 
+                             }];
             [UIView animateWithDuration:0.5 animations:^{
-
+                
             }];
         }
             break;
-
+            
         default:
             break;
     }
@@ -132,18 +145,32 @@ static CGFloat circleWidth = 32;
     if (btn.selected) {
         [[DFLogView shareLogView] close];
     }
-    else
-        [[DFLogView shareLogView] show];
+    else {
+        
+        NSLog(@"开始展示%@", [NSDate date]);
+        btn.hidden = YES;
+        [self.indicatorView startAnimating];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [[DFLogView shareLogView] showComplete:^{
+                
+                NSLog(@"结束展示%@", [NSDate date]);
+                btn.hidden = NO;
+                [self.indicatorView stopAnimating];
+            }];
+        });
+    }
     
     btn.selected = !btn.selected;
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect {
+ // Drawing code
+ }
+ */
 
 @end
+

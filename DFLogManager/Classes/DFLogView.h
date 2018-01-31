@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "DFLogModel.h"
 
-@interface DFLogView : UIView 
+@interface DFLogView : UIView
 
 /**
  *  页面初始化
@@ -29,8 +29,9 @@
 /**
  *  日志在app上唤出
  */
-- (void)show;
+- (void)showComplete:(void (^)(void))animations;
 
 - (void)close;
 
 @end
+

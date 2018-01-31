@@ -15,10 +15,11 @@
 
 @interface CLILogerTableViewCell : UITableViewCell {
     
+    //    UITextView *_contentTV;
     UILabel *_content;
 }
 
-@property (retain, nonatomic) DFLogModel *model;
+@property (copy, nonatomic) NSString *showStr;
 @end
 
 @implementation CLILogerTableViewCell
@@ -35,19 +36,16 @@
         
         [_content mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.edges.equalTo(self.contentView).insets(UIEdgeInsetsMake(10, 15, 10, 15));
+            make.edges.equalTo(self.contentView).insets(UIEdgeInsetsMake(5, 15, 0, 15));
         }];
     }
     return self;
 }
 
-- (void)setModel:(DFLogModel *)model {
+- (void)setShowStr:(NSString *)showStr {
     
-    _model = model;
-    
-    NSString *contentStr = [NSString stringWithFormat:@"%@\n%@\n%@\n==end==", model.requestObject, model.responseObject.length ? model.responseObject : @"无", model.error.length ? model.error : @""];
-    _content.text = contentStr;
-    [self layoutIfNeeded];
+    _showStr = showStr;
+    _content.text = _showStr;
 }
 
 @end
@@ -65,8 +63,10 @@
     UILabel *_titleLB;
     UILabel *_timeLB;
     UIButton *_bgBtn;
+    UIActivityIndicatorView *_indicatorView;
 }
 
+@property (assign, nonatomic) BOOL showWaitingView;
 @property (retain, nonatomic) DFLogModel *model;
 @property (weak, nonatomic) id <CLILogerDelegate> delegate;
 
@@ -98,6 +98,10 @@
         line.backgroundColor = [UIColor groupTableViewBackgroundColor];
         [self.contentView addSubview:line];
         
+        _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _indicatorView.hidesWhenStopped = YES;
+        [self.contentView addSubview:_indicatorView];
+        
         [titleLB mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.left.equalTo(self.contentView).offset(15);
@@ -116,6 +120,11 @@
             make.edges.equalTo(self.contentView);
         }];
         
+        [_indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.center.equalTo(self.contentView);
+        }];
+        
         [line mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.left.right.bottom.equalTo(self.contentView);
@@ -125,6 +134,15 @@
         [_timeLB setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     }
     return self;
+}
+
+- (void)setShowWaitingView:(BOOL)showWaitingView {
+    
+    _showWaitingView = showWaitingView;
+    if (showWaitingView) {
+        [_indicatorView startAnimating];
+    }
+    else [_indicatorView stopAnimating];
 }
 
 - (void)setModel:(DFLogModel *)model {
@@ -155,11 +173,19 @@
     _bgBtn.selected = !_bgBtn.selected;
     if (_bgBtn.selected && [self.delegate respondsToSelector:@selector(selectHeaderViewAt:)]) {
         
-        [self.delegate selectHeaderViewAt:self];
+        self.showWaitingView = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self.delegate selectHeaderViewAt:self];
+        });
     }
     else if (!_bgBtn.selected && [self.delegate respondsToSelector:@selector(deselectHeaderViewAt:)]) {
         
-        [self.delegate deselectHeaderViewAt:self];
+        self.showWaitingView = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self.delegate deselectHeaderViewAt:self];
+        });
     }
 }
 
@@ -168,13 +194,14 @@
 @interface DFLogView () <UITableViewDelegate, UITableViewDataSource, CLILogerDelegate> {
     
     NSMutableArray *_selectArr;
-    NSMutableArray *_items;
+    NSMutableArray<DFLogModel *> *_items;
     UITableView *_tableView;
     
     UIPanGestureRecognizer *_moveGesture;
     UIPanGestureRecognizer *_scaleGesture;
 }
 
+@property (retain, nonatomic) UIView *scaleView;
 @end
 
 @implementation DFLogView
@@ -189,11 +216,20 @@ static DFLogView *_instance;
     return _instance;
 }
 
+- (UIView *)scaleView {
+    
+    if (!_scaleView) {
+        
+        _scaleView = [UIView new];
+        _scaleView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.1];
+    }
+    
+    return _scaleView;
+}
+
 - (instancetype)init
 {
     if (self = [super init]) {
-        
-        self.clipsToBounds = YES;
         
         UIView *moveableView = [[UIView alloc] init];
         moveableView.backgroundColor = [[UIColor groupTableViewBackgroundColor] colorWithAlphaComponent:.8];
@@ -201,13 +237,13 @@ static DFLogView *_instance;
         [moveableView addGestureRecognizer:_moveGesture];
         
         NSBundle *selfBundle = [NSBundle bundleForClass:[self class]];
-        UIImageView *scalableView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        scalableView.image = [UIImage imageNamed:@"df_scale" inBundle:selfBundle compatibleWithTraitCollection:NULL];
-        scalableView.contentMode = UIViewContentModeScaleAspectFit;
-        scalableView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.6];
-        scalableView.userInteractionEnabled = YES;
+        UIImageView *scalableIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+        scalableIcon.image = [UIImage imageNamed:@"df_scale" inBundle:selfBundle compatibleWithTraitCollection:NULL];
+        scalableIcon.contentMode = UIViewContentModeScaleAspectFit;
+        scalableIcon.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.6];
+        scalableIcon.userInteractionEnabled = YES;
         _scaleGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(scale)];
-        [scalableView addGestureRecognizer:_scaleGesture];
+        [scalableIcon addGestureRecognizer:_scaleGesture];
         
         UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeSystem];
         [resetBtn setTitle:@"清空" forState:UIControlStateNormal];
@@ -216,9 +252,11 @@ static DFLogView *_instance;
         [sendBtn setTitle:@"发送" forState:UIControlStateNormal];
         sendBtn.titleLabel.font = [UIFont systemFontOfSize:13];
         
-        UIButton *removeBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-        [removeBtn setTitle:@"关闭" forState:UIControlStateNormal];
-        removeBtn.titleLabel.font = [UIFont systemFontOfSize:13];
+//        UIButton *removeBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//        [removeBtn setTitle:@"关闭" forState:UIControlStateNormal];
+//        removeBtn.titleLabel.font = [UIFont systemFontOfSize:13];
+        
+        _scaleView.hidden = YES;
         
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
         _tableView.delegate = self;
@@ -226,16 +264,17 @@ static DFLogView *_instance;
         _tableView.bounces = NO;
         _tableView.estimatedSectionHeaderHeight = 0;
         _tableView.estimatedSectionFooterHeight = 0;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
         [_tableView registerClass:[CLILogerTableViewCell class] forCellReuseIdentifier:@"CLILogerTableViewCell"];
         [_tableView registerClass:[CLILogerTableViewHeader class] forHeaderFooterViewReuseIdentifier:@"CLILogerTableViewHeader"];
         
         [self addSubview:moveableView];
         [self addSubview:resetBtn];
-        [self addSubview:removeBtn];
-//        [self addSubview:sendBtn];
+//        [self addSubview:removeBtn];
+        //        [self addSubview:sendBtn];
         [self addSubview:_tableView];
-        [self addSubview:scalableView];
+        [self addSubview:scalableIcon];
         
         [moveableView mas_makeConstraints:^(MASConstraintMaker *make) {
             
@@ -243,10 +282,10 @@ static DFLogView *_instance;
             make.top.equalTo(self);
         }];
         
-        [scalableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        [scalableIcon mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.right.bottom.equalTo(self);
-            make.size.mas_equalTo(scalableView.frame.size);
+            make.size.mas_equalTo(scalableIcon.frame.size);
         }];
         
         [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -257,19 +296,19 @@ static DFLogView *_instance;
             make.size.mas_equalTo(CGSizeMake(60, 30));
         }];
         
-//        [sendBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            
-//            make.left.equalTo(resetBtn.mas_right).offset(15);
+        //        [sendBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        //
+        //            make.left.equalTo(resetBtn.mas_right).offset(15);
+        //            make.top.equalTo(resetBtn);
+        //            make.size.equalTo(resetBtn);
+        //        }];
+        
+//        [removeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//
+//            make.right.equalTo(self).offset(-15);
 //            make.top.equalTo(resetBtn);
 //            make.size.equalTo(resetBtn);
 //        }];
-        
-        [removeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            
-            make.right.equalTo(self).offset(-15);
-            make.top.equalTo(resetBtn);
-            make.size.equalTo(resetBtn);
-        }];
         
         [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
             
@@ -277,9 +316,14 @@ static DFLogView *_instance;
             make.top.equalTo(resetBtn.mas_bottom).offset(10);
         }];
         
+        [_scaleView mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.edges.equalTo(self);
+        }];
+        
         [resetBtn addTarget:self action:@selector(reset) forControlEvents:UIControlEventTouchUpInside];
-        [removeBtn addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
-//        [sendBtn addTarget:self action:@selector(send) forControlEvents:UIControlEventTouchUpInside];
+//        [removeBtn addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
+        //        [sendBtn addTarget:self action:@selector(send) forControlEvents:UIControlEventTouchUpInside];
         
         RLMResults *fliter = [DFLogModel allObjectsInRealm:[DFLogManager shareLogManager].realm];
         
@@ -359,6 +403,8 @@ static DFLogView *_instance;
             
         case UIGestureRecognizerStateBegan: {
             
+            [self.superview addSubview:self.scaleView];
+            self.scaleView.frame = self.frame;
             startPoint = [_scaleGesture locationInView:self.superview];
             startFrame = self.frame;
             break;
@@ -387,13 +433,18 @@ static DFLogView *_instance;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    self.frame = frame;
-                    [self layoutIfNeeded];
+                    _scaleView.frame = frame;
                 });
             });
             break;
         }
+        case UIGestureRecognizerStateEnded: {
             
+            self.frame = _scaleView.frame;
+            [_scaleView removeFromSuperview];
+            [self layoutIfNeeded];
+            break;
+        }
         default:
             break;
     }
@@ -404,7 +455,7 @@ static DFLogView *_instance;
     [[DFLogManager shareLogManager] reset];
 }
 
-- (void)show
+- (void)showComplete:(void (^)(void))animations
 {
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
@@ -413,6 +464,9 @@ static DFLogView *_instance;
     if (CGRectEqualToRect(self.frame, CGRectZero)) {
         
         self.frame = UIEdgeInsetsInsetRect(keyWindow.bounds, UIEdgeInsetsMake(20, 10, 110, 10));
+    }
+    if (animations) {
+        animations();
     }
 }
 
@@ -433,9 +487,10 @@ static DFLogView *_instance;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    if ([_selectArr containsObject:_items[section]]) {
+    DFLogModel *manager = _items[section];
+    if ([_selectArr containsObject:manager]) {
         
-        return 1;
+        return manager.contentSeperateArr.count;
     }
     return 0;
 }
@@ -443,7 +498,7 @@ static DFLogView *_instance;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     CLILogerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CLILogerTableViewCell"];
-    cell.model = _items[indexPath.section];
+    cell.showStr = _items[indexPath.section].contentSeperateArr[indexPath.row];
     
     return cell;
 }
@@ -468,7 +523,7 @@ static DFLogView *_instance;
     
     return [tableView fd_heightForCellWithIdentifier:@"CLILogerTableViewCell" configuration:^(CLILogerTableViewCell *cell) {
         
-        cell.model = _items[indexPath.section];
+        cell.showStr = _items[indexPath.section].contentSeperateArr[indexPath.row];
     }];
 }
 
@@ -477,31 +532,52 @@ static DFLogView *_instance;
     return .1;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    CLILogerTableViewHeader *header = (CLILogerTableViewHeader *)[tableView headerViewForSection:indexPath.section];
+    header.showWaitingView = NO;
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    CLILogerTableViewHeader *header = (CLILogerTableViewHeader *)[tableView headerViewForSection:indexPath.section];
+    header.showWaitingView = NO;
+}
+
 #pragma mark - CLILogerDelegate
 - (void)selectHeaderViewAt:(CLILogerTableViewHeader *)header {
     
     NSInteger section = [_items indexOfObject:header.model];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:section];
+    NSMutableArray *indexPathes = [NSMutableArray array];
+    for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
+        
+        [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+    }
     
     if (![_selectArr containsObject:header.model]) {
         
         header.model.selected = YES;
         [_selectArr addObject:header.model];
         
-        [_tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [_tableView insertRowsAtIndexPaths:indexPathes withRowAnimation:UITableViewRowAnimationTop];
     }
 }
 
 - (void)deselectHeaderViewAt:(CLILogerTableViewHeader *)header {
     
     NSInteger section = [_items indexOfObject:header.model];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:section];
+    NSMutableArray *indexPathes = [NSMutableArray array];
+    for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
+        
+        [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+    }
+    
     if ([_selectArr containsObject:header.model]) {
         
         header.model.selected = NO;
         [_selectArr removeObject:header.model];
         
-        [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [_tableView deleteRowsAtIndexPaths:indexPathes withRowAnimation:UITableViewRowAnimationTop];
     }
 }
 
@@ -532,3 +608,5 @@ static DFLogView *_instance;
  */
 
 @end
+
+

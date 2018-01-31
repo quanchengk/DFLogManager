@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 利用realm进行本地缓存的日志控件
-更新内容：修改图片名，防止和程序内其他图片重名
+更新内容：优化交互体验
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
