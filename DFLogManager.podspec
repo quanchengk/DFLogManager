@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'DFLogManager/Classes/**/*'
-  s.resources = 'DFLogManager/Assets/*.{png,bundle,plist}'    #引用其他资源文件
+  s.resources = 'DFLogManager/Assets/*.{png,bundle,plist,swift-version}'    #引用其他资源文件
   
   # s.resource_bundles = {
   #   'DFLogManager' => ['DFLogManager/Assets/*.png']
