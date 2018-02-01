@@ -221,12 +221,13 @@
 - (void)loadData {
     
     RLMResults *fliter = [DFLogModel allObjectsInRealm:[DFLogManager shareLogManager].realm];
-    RLMResults *fliterResult = [fliter sortedResultsUsingKeyPath:@"occurTime" ascending:NO];
+    RLMResults *fliterResult = [fliter sortedResultsUsingKeyPath:@"requestID" ascending:NO];
     NSInteger curCount = _items.count;
     for (NSInteger i = curCount; i < MIN(curCount + 10, fliterResult.count); i++) {
         
         DFLogModel *model = [fliterResult objectAtIndex:i];
-        [_items addObject:model];
+        DFLogModel *copyModel = [model copy];
+        [_items addObject:copyModel];
     }
     [self reloadData];
     [self.mj_header endRefreshing];

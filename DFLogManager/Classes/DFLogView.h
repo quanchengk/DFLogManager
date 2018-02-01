@@ -21,7 +21,7 @@
  */
 - (void)add:(DFLogModel *)model;
 
-- (void)deleteAll;
+- (void)deleteIndexes:(NSIndexSet *)indexSet;
 
 /**
  *  日志在app上唤出

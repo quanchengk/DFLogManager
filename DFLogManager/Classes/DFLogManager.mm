@@ -11,6 +11,8 @@
 #import "DFLogView.h"
 #import "DFLogCircleView.h"
 
+#define kDFReleaseNormalCount 50 // 日志保留正常条目的条数
+#define kDFReleaseErrorCount 20  // 日志保留异常条目的条数
 @interface DFLogManager ()
 
 @property (retain, nonatomic) DFLogCircleView *suspensionWindow;
@@ -57,22 +59,42 @@ static DFLogManager *_instance;
     return self;
 }
 
-- (void)setDebugMode:(BOOL)debugMode {
+- (DFLogCircleView *)suspensionWindow {
     
-    if (_debugMode != debugMode) {
+    if (!_suspensionWindow) {
         
-        _debugMode = debugMode;
-        
-        if (debugMode) {
-            
-            DFLogCircleView *circleView = [[DFLogCircleView alloc] initWithFrame:CGRectZero];
-            [circleView show];
-            self.suspensionWindow = circleView;
-        }
+        DFLogCircleView *circleView = [[DFLogCircleView alloc] initWithFrame:CGRectZero];
+        _suspensionWindow = circleView;
+    }
+    return _suspensionWindow;
+}
+
+- (void)setMode:(DFLogType)mode {
+    
+    _mode = mode;
+    switch (mode) {
+        case DFLogTypeNone:
+            [_suspensionWindow resignKeyWindow];
+            [self reset];
+            break;
+        case DFLogTypeDebug:
+            [self.suspensionWindow show];
+            break;
+        case DFLogTypeRelease:
+            [_suspensionWindow resignKeyWindow];
+            // 保留固定条目
+            [self saveModelCountFrom:0 accrodingLimit:YES];
+            break;
+        default:
+            break;
     }
 }
 
 - (void)addLogModel:(DFLogModel *)logModel {
+    
+    if (self.mode == DFLogTypeNone) {
+        return;
+    }
     
     DFLogView *logerView = [DFLogView shareLogView];
     
@@ -121,25 +143,83 @@ static DFLogManager *_instance;
         
         [logerView add:logModel];
     }
+    
+    if (self.mode == DFLogTypeRelease) {
+        
+        // 保留固定条目
+        [self saveModelCountFrom:0 accrodingLimit:YES];
+    }
 }
 
+// 清空
 - (void)reset {
     
-    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
+    [self saveModelCountFrom:0 accrodingLimit:NO];
+}
+
+// 从fromIndex开始移除日志，是否根据宏定义的个数约束条目
+- (void)saveModelCountFrom:(NSInteger)fromIndex accrodingLimit:(BOOL)accroding {
     
-    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
     NSMutableArray *objects = [NSMutableArray array];
-    for (NSInteger i = result.count - 1; i >= result.count; i--) {
+    NSInteger errorCount = 0;
+    NSInteger normalCount = 0;
+    for (NSInteger i = 0; i < result.count; i++) {
         
-        //多余的部分全部删掉
         DFLogModel *model = [result objectAtIndex:i];
-        [objects addObject:model];
-        [indexSet addIndex:i];
+        
+        if (accroding) {
+            
+            if (self.mode == DFLogTypeRelease) {
+                
+                // 常规记录个数
+                // 超过阈值，开始把下标记录进要删除的数组容器
+                if (model.error.length > 0) {
+                    
+                    if (++errorCount > kDFReleaseErrorCount) {
+                        
+                        [objects addObject:model];
+                        [indexes addIndex:i];
+                    }
+                }
+                else {
+                    
+                    if (++normalCount > kDFReleaseNormalCount) {
+                        
+                        [objects addObject:model];
+                        [indexes addIndex:i];
+                    }
+                }
+            }
+            else if (i > fromIndex || self.mode == DFLogTypeNone) {
+                
+                switch (self.mode) {
+                    case DFLogTypeNone:
+                    case DFLogTypeDebug:
+                        // DFLogTypeNone全部删
+                        // DFLogTypeDebug 调用fromIndex后全部删
+                        [objects addObject:model];
+                        [indexes addIndex:i];
+                        break;
+                    case DFLogTypeRelease:
+                        
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        else {
+            
+            [objects addObject:model];
+            [indexes addIndex:i];
+        }
     }
     
     @try {
         
-        [[DFLogView shareLogView] deleteAll];
+        [[DFLogView shareLogView] deleteIndexes:indexes];
         [_realm transactionWithBlock:^{
             
             [_realm deleteObjects:objects];

@@ -14,7 +14,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [DFLogManager shareLogManager].debugMode = YES;
+    [DFLogManager shareLogManager].mode = DFLogTypeRelease;
     return YES;
 }
 

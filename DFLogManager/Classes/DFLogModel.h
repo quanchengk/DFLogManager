@@ -8,7 +8,7 @@
 
 #import <Realm/Realm.h>
 
-@interface DFLogModel : RLMObject
+@interface DFLogModel : RLMObject <NSCopying>
 
 @property NSNumber<RLMInt> *requestID;
 @property NSString *selector;

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.0.4'
+  s.version          = '0.0.5'
   s.summary          = '日志控件'
 
 # This description is used to generate tags and improve search results.
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 利用realm进行本地缓存的日志控件
-更新内容：优化交互体验
+更新内容：增加场景限制，增加对应的保留条数限制
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'

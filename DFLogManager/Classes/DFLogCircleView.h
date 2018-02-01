@@ -11,4 +11,5 @@
 @interface DFLogCircleView : UIWindow
 
 - (void)show;
+
 @end

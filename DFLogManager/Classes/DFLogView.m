@@ -262,6 +262,19 @@ static DFLogView *_instance;
     [_tableView deleteSections:set withRowAnimation:UITableViewRowAnimationNone];
 }
 
+- (void)deleteIndexes:(NSIndexSet *)indexSet {
+    NSIndexSet *deleteIndexSet = [indexSet indexesWithOptions:0 passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if (idx > _tableView.items.count) {
+            return NO;
+        }
+        return YES;
+    }];
+    
+    [_tableView.items removeObjectsAtIndexes:deleteIndexSet];
+    [_tableView reloadData];
+}
+
 /*
  // Only override drawRect: if you perform custom drawing.
  // An empty implementation adversely affects performance during animation.
