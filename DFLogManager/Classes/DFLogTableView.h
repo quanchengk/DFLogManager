@@ -6,7 +6,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MJRefresh.h"
 
 @class DFLogerTableViewHeader;
 @protocol DFLogerDelegate <NSObject>

@@ -10,6 +10,7 @@
 #import <Masonry/Masonry.h>
 #import "DFLogManager.h"
 #import "UITableView+FDTemplateLayoutCell.h"
+#import "MJRefresh.h"
 
 #define DFScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
 
