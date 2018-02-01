@@ -20,6 +20,14 @@
     return @[@"selected", @"contentSeperateArr"];
 }
 
+- (NSString *)error {
+    
+    if (!_error) {
+        _error = @"";
+    }
+    return _error;
+}
+
 - (NSArray *)contentSeperateArr {
     
     if (!_contentSeperateArr) {

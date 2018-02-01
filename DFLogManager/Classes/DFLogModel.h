@@ -6,16 +6,16 @@
 //  Copyright © 2017年 全程恺. All rights reserved.
 //
 
-#import <Realm/Realm.h>
+#import <Foundation/Foundation.h>
 
-@interface DFLogModel : RLMObject
+@interface DFLogModel : NSObject
 
-@property NSNumber<RLMInt> *requestID;
-@property NSString *selector;
-@property NSString *error;
-@property NSString *requestObject;
-@property NSString *responseObject;
-@property NSDate *occurTime;
+@property (nonatomic, retain) NSNumber *requestID;
+@property (nonatomic, copy) NSString *selector;
+@property (nonatomic, copy) NSString *error;
+@property (nonatomic, copy) NSString *requestObject;
+@property (nonatomic, copy) NSString *responseObject;
+@property (nonatomic, retain) NSDate *occurTime;
 
 //cell用到的属性，区分当前数据是否已被选中
 @property (assign, nonatomic) BOOL selected;

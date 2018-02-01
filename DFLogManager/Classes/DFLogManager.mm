@@ -32,7 +32,6 @@ void UncaughtExceptionHandler(NSException *exception) {
     [[DFLogManager shareLogManager] addLogModel:model];
 }
 
-
 static DFLogManager *_instance;
 + (instancetype)shareLogManager
 {
@@ -47,13 +46,10 @@ static DFLogManager *_instance;
     
     if (self = [super init]) {
         
-        NSString *fileStr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-        NSURL *url = [[[NSURL fileURLWithPath:fileStr] URLByAppendingPathComponent:@"Debug"] URLByAppendingPathExtension:@"realm"];
-        _realm = [RLMRealm realmWithURL:url];
+        _dbManager = [DFLogDBManager new];
         
         //开启错误日志
         NSSetUncaughtExceptionHandler(&UncaughtExceptionHandler);
-        _maxLogerCount = 5;
     }
     return self;
 }
@@ -78,8 +74,6 @@ static DFLogManager *_instance;
     DFLogView *logerView = [DFLogView shareLogView];
     
     // 产生时间
-    NSNumber *maxRequestID = [[DFLogModel allObjectsInRealm:_realm] maxOfProperty:@"requestID"];
-    logModel.requestID = [NSNumber numberWithInt:([maxRequestID intValue] + 1)];
     logModel.occurTime = [NSDate date];
     
     if (![logModel.requestObject isKindOfClass:[NSString class]]) {
@@ -91,16 +85,11 @@ static DFLogManager *_instance;
     
     @try {
         
-        [_realm transactionWithBlock:^{
-            
-            [_realm addObject:logModel];
-        }];
+        [_dbManager saveModel:logModel];
     } @catch (NSException *exception) {
         
-        NSNumber *maxRequestID = [[DFLogModel allObjectsInRealm:_realm] maxOfProperty:@"requestID"];
         //产生时间
         DFLogModel *errorModel = [DFLogModel new];
-        errorModel.requestID = [NSNumber numberWithInt:([maxRequestID intValue] + 1)];
         errorModel.selector = logModel.selector;
         errorModel.error = [NSString stringWithFormat:@"realm插入错误：%@\n", exception];
         errorModel.requestObject = logModel.requestObject;
@@ -108,62 +97,24 @@ static DFLogManager *_instance;
         
         @try {
             
-            [_realm transactionWithBlock:^{
-                
-                [_realm addObject:errorModel];
-            }];
+            [_dbManager saveModel:errorModel];
         } @catch (NSException *exception) {
             
         } @finally {
             
             [logerView add:errorModel];
-            [self setMaxLogerCount:_maxLogerCount];
         }
     } @finally {
         
         [logerView add:logModel];
-        [self setMaxLogerCount:_maxLogerCount];
     }
 }
 
 - (void)reset {
     
-    [self saveLogerCount:0];
-}
-
-- (void)setMaxLogerCount:(NSInteger)maxLogerCount {
-    
-    _maxLogerCount = maxLogerCount;
-    
-    [self saveLogerCount:maxLogerCount];
-}
-
-- (void)saveLogerCount:(NSInteger)index {
-    
-    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
-    
-    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-    NSMutableArray *objects = [NSMutableArray array];
-    for (NSInteger i = result.count - 1; i >= index; i--) {
-        
-        //多余的部分全部删掉
-        DFLogModel *model = [result objectAtIndex:i];
-        [objects addObject:model];
-        [indexSet addIndex:i];
-    }
-    
-    @try {
-        
-        [[DFLogView shareLogView] deleteIndexes:indexSet];
-        [_realm transactionWithBlock:^{
-            
-            [_realm deleteObjects:objects];
-        }];
-    } @catch (NSException *exception) {
-        
-        NSLog(@"%@", exception);
-    } @finally {
-        
+    BOOL res = [_dbManager deleteAllModel];
+    if (res) {
+        [[DFLogView shareLogView] deleteAll];
     }
 }
 
