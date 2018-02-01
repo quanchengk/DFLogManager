@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-利用fmdb进行本地缓存的日志控件
-更新内容：优化交互体验，数据库由realm调整为fmdb
+利用sqlite3进行本地缓存的日志控件
+更新内容：优化交互体验，数据库由realm调整为sqlite3
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
@@ -32,17 +32,17 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'DFLogManager/Classes/**/*'
-  s.resources = 'DFLogManager/Assets/*.{png,bundle,plist,swift-version}'    #引用其他资源文件
+  s.resources = 'DFLogManager/Assets/*.{png,bundle,plist}'    #引用其他资源文件
   
   # s.resource_bundles = {
   #   'DFLogManager' => ['DFLogManager/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-# s.frameworks = 'UIKit'
+  s.frameworks = 'UIKit'
+  s.library = 'sqlite3'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
-  s.dependency 'FMDB'
   s.dependency 'MJRefresh'
 end

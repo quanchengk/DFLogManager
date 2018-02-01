@@ -91,7 +91,7 @@ static DFLogManager *_instance;
         //产生时间
         DFLogModel *errorModel = [DFLogModel new];
         errorModel.selector = logModel.selector;
-        errorModel.error = [NSString stringWithFormat:@"realm插入错误：%@\n", exception];
+        errorModel.error = [NSString stringWithFormat:@"fmdb插入错误：%@\n", exception];
         errorModel.requestObject = logModel.requestObject;
         errorModel.occurTime = [NSDate date];
         

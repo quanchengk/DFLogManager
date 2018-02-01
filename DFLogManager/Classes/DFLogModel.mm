@@ -10,16 +10,6 @@
 
 @implementation DFLogModel
 
-+ (NSString *)primaryKey {
-    
-    return @"requestID";
-}
-
-+ (NSArray *)ignoredProperties {
-    
-    return @[@"selected", @"contentSeperateArr"];
-}
-
 - (NSString *)error {
     
     if (!_error) {

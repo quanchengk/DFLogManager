@@ -12,7 +12,6 @@
 
 @property (assign, nonatomic) NSInteger maxLogerCount;
 
-- (NSArray *)getAllModel;
 - (NSArray *)getModelFrom:(NSInteger)fromIndex to:(NSInteger)toIndex;
 
 - (BOOL)saveModel:(DFLogModel *)logModel;
