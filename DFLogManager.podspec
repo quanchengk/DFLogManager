@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-利用realm进行本地缓存的日志控件
+利用fmdb进行本地缓存的日志控件
 更新内容：优化交互体验，数据库由realm调整为fmdb
                        DESC
 
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  s.frameworks = 'UIKit'
+# s.frameworks = 'UIKit'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
