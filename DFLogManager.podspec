@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.0.3'
+  s.version          = '0.0.4'
   s.summary          = '日志控件'
 
 # This description is used to generate tags and improve search results.
@@ -44,4 +44,5 @@ Pod::Spec.new do |s|
   s.dependency 'Realm'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
+s.dependency 'MJRefresh'
 end

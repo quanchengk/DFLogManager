@@ -48,12 +48,11 @@ static DFLogManager *_instance;
     if (self = [super init]) {
         
         NSString *fileStr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-        NSURL *url = [[[NSURL fileURLWithPath:fileStr] URLByAppendingPathComponent:@"Debug"] URLByAppendingPathExtension:@"realm"];
+        NSURL *url = [[[NSURL fileURLWithPath:fileStr] URLByAppendingPathComponent:@"log"] URLByAppendingPathExtension:@"realm"];
         _realm = [RLMRealm realmWithURL:url];
         
         //开启错误日志
         NSSetUncaughtExceptionHandler(&UncaughtExceptionHandler);
-        _maxLogerCount = 5;
     }
     return self;
 }
@@ -117,34 +116,20 @@ static DFLogManager *_instance;
         } @finally {
             
             [logerView add:errorModel];
-            [self setMaxLogerCount:_maxLogerCount];
         }
     } @finally {
         
         [logerView add:logModel];
-        [self setMaxLogerCount:_maxLogerCount];
     }
 }
 
 - (void)reset {
     
-    [self saveLogerCount:0];
-}
-
-- (void)setMaxLogerCount:(NSInteger)maxLogerCount {
-    
-    _maxLogerCount = maxLogerCount;
-    
-    [self saveLogerCount:maxLogerCount];
-}
-
-- (void)saveLogerCount:(NSInteger)index {
-    
     RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
     
     NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
     NSMutableArray *objects = [NSMutableArray array];
-    for (NSInteger i = result.count - 1; i >= index; i--) {
+    for (NSInteger i = result.count - 1; i >= result.count; i--) {
         
         //多余的部分全部删掉
         DFLogModel *model = [result objectAtIndex:i];
@@ -154,7 +139,7 @@ static DFLogManager *_instance;
     
     @try {
         
-        [[DFLogView shareLogView] deleteIndexes:indexSet];
+        [[DFLogView shareLogView] deleteAll];
         [_realm transactionWithBlock:^{
             
             [_realm deleteObjects:objects];

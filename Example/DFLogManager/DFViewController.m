@@ -19,11 +19,20 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.backgroundColor = [UIColor redColor];
+    btn.frame = CGRectMake(20, 40, 80, 40);
+    [btn addTarget:self action:@selector(addNew) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+}
+
+- (void)addNew {
+    
     DFLogModel *logModel = [DFLogModel new];
     logModel.selector = @"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试";
     logModel.requestObject = @"请求方法";
     logModel.responseObject = @"回参";
-//    logModel.error = @"错误";
+    //    logModel.error = @"错误";
     [[DFLogManager shareLogManager] addLogModel:logModel];
 }
 
