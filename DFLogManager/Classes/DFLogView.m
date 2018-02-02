@@ -109,6 +109,20 @@ static DFLogView *_instance;
         }];
         
         [resetBtn addTarget:self action:@selector(reset) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([DFLogManager shareLogManager].mode == DFLogTypeRelease) {
+            
+            UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+            [closeBtn setTitle:@"关闭" forState:UIControlStateNormal];
+            [self addSubview:closeBtn];
+            [closeBtn addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
+            [closeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                
+                make.right.offset(-15);
+                make.top.bottom.equalTo(resetBtn);
+                make.size.equalTo(resetBtn);
+            }];
+        }
     }
     return self;
 }
