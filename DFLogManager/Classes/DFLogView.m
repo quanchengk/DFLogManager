@@ -279,7 +279,7 @@ static DFLogView *_instance;
 - (void)deleteIndexes:(NSIndexSet *)indexSet {
     NSIndexSet *deleteIndexSet = [indexSet indexesWithOptions:0 passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) {
         
-        if (idx > _tableView.items.count) {
+        if (idx >= _tableView.items.count) {
             return NO;
         }
         return YES;
