@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.0.7'
+  s.version          = '0.0.8'
   s.summary          = '日志控件'
 
 # This description is used to generate tags and improve search results.
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 利用realm进行本地缓存的日志控件
-更新内容：修复列表无法清空的问题
+更新内容：增加捆绑控件弹出日志功能；增加输入框配置公共参数及修改回调；
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
@@ -44,5 +44,6 @@ Pod::Spec.new do |s|
   s.dependency 'Realm'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
-s.dependency 'MJRefresh'
+  s.dependency 'MJRefresh'
+  s.dependency 'LSiOSPopView'
 end

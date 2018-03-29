@@ -24,11 +24,12 @@
     btn.backgroundColor = [UIColor redColor];
     btn.frame = CGRectMake(20, 40, 80, 40);
     [btn addTarget:self action:@selector(addNew) forControlEvents:UIControlEventTouchUpInside];
+    [[DFLogManager shareLogManager] bindControl:btn duringTime:0 targetCount:5];
     [self.view addSubview:btn];
     
     UIButton *btn2 = [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.backgroundColor = [UIColor redColor];
-    btn2.frame = CGRectMake(20, 80, 80, 40);
+    btn2.frame = CGRectMake(20, 120, 80, 40);
     [btn2 addTarget:self action:@selector(showReleaseView) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn2];
 }

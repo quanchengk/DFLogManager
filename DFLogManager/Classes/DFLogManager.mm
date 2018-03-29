@@ -16,6 +16,11 @@
 @interface DFLogManager ()
 
 @property (retain, nonatomic) DFLogCircleView *suspensionWindow;
+
+@property (retain, nonatomic) UIControl *bindControl;
+@property (assign, nonatomic) NSInteger targetCount;
+@property (assign, nonatomic) NSInteger currentCount;
+@property (assign, nonatomic) NSInteger duringTime;
 @end
 
 @implementation DFLogManager
@@ -28,8 +33,8 @@ void UncaughtExceptionHandler(NSException *exception) {
     DFLogModel *model = [DFLogModel new];
     model.selector = [NSString stringWithFormat:@"系统闪退：%@", name];
     model.requestObject = reason;
-    model.responseObject = [DFLogManager stringWithJsonValue:arr];
-    model.error = [DFLogManager stringWithJsonValue:exception.userInfo];
+    model.responseObject = [DFLogManager _stringWithJsonValue:arr];
+    model.error = [DFLogManager _stringWithJsonValue:exception.userInfo];
     
     [[DFLogManager shareLogManager] addLogModel:model];
 }
@@ -83,11 +88,31 @@ static DFLogManager *_instance;
         case DFLogTypeRelease:
             [_suspensionWindow resignKeyWindow];
             // 保留固定条目
-            [self saveModelCountFrom:0 accrodingLimit:YES];
+            [self _saveModelCountFrom:0 accrodingLimit:YES];
             break;
         default:
             break;
     }
+}
+
+- (void)bindControl:(UIControl *)control duringTime:(NSInteger)duringTime targetCount:(NSInteger)count {
+    
+    NSAssert([control isKindOfClass:[UIControl class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
+    
+    if (_bindControl) {
+        [_bindControl removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    _bindControl = control;
+    _targetCount = count;
+    _duringTime = duringTime;
+    _currentCount = 0;
+    [_bindControl addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *))modifyBlock {
+    
+    [[DFLogView shareLogView] textFieldContent:content modifyBlock:modifyBlock];
 }
 
 - (void)addLogModel:(DFLogModel *)logModel {
@@ -104,10 +129,10 @@ static DFLogManager *_instance;
     logModel.occurTime = [NSDate date];
     
     if (![logModel.requestObject isKindOfClass:[NSString class]]) {
-        logModel.requestObject = [DFLogManager stringWithJsonValue:logModel.requestObject];
+        logModel.requestObject = [DFLogManager _stringWithJsonValue:logModel.requestObject];
     }
     if (![logModel.responseObject isKindOfClass:[NSString class]]) {
-        logModel.responseObject = [DFLogManager stringWithJsonValue:logModel.responseObject];
+        logModel.responseObject = [DFLogManager _stringWithJsonValue:logModel.responseObject];
     }
     
     @try {
@@ -147,18 +172,42 @@ static DFLogManager *_instance;
     if (self.mode == DFLogTypeRelease) {
         
         // 保留固定条目
-        [self saveModelCountFrom:0 accrodingLimit:YES];
+        [self _saveModelCountFrom:0 accrodingLimit:YES];
     }
 }
 
 // 清空
 - (void)reset {
     
-    [self saveModelCountFrom:0 accrodingLimit:NO];
+    [self _saveModelCountFrom:0 accrodingLimit:NO];
+}
+
+- (void)_bindCount {
+    
+    if (_duringTime > 0) {
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [self performSelector:@selector(_resetCount) withObject:nil afterDelay:_duringTime];
+    }
+    
+    NSLog(@"--------------- %ld", (long)_currentCount);
+    if (++_currentCount >= _targetCount) {
+        
+        [[DFLogView shareLogView] showComplete:^{
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self];
+            [self _resetCount];
+        }];
+    }
+}
+
+- (void)_resetCount {
+    
+    _currentCount = 0;
 }
 
 // 从fromIndex开始移除日志，是否根据宏定义的个数约束条目
-- (void)saveModelCountFrom:(NSInteger)fromIndex accrodingLimit:(BOOL)accroding {
+- (void)_saveModelCountFrom:(NSInteger)fromIndex accrodingLimit:(BOOL)accroding {
     
     RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
     NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
@@ -232,7 +281,7 @@ static DFLogManager *_instance;
     }
 }
 
-+ (NSString *)stringWithJsonValue:(id)obj
++ (NSString *)_stringWithJsonValue:(id)obj
 {
     if (!obj) {
         

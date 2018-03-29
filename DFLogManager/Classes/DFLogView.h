@@ -17,6 +17,11 @@
 + (instancetype)shareLogView;
 
 /**
+ * 参考DFLogManager.h的解释
+ */
+- (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *text))modifyBlock;
+
+/**
  *  添加消息体
  */
 - (void)add:(DFLogModel *)model;
