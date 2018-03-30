@@ -17,10 +17,12 @@
 
 @property (retain, nonatomic) DFLogCircleView *suspensionWindow;
 
-@property (retain, nonatomic) UIControl *bindControl;
+@property (retain, nonatomic) UIView *bindView;
+@property (retain, nonatomic) UITapGestureRecognizer *tapGes;
 @property (assign, nonatomic) NSInteger targetCount;
 @property (assign, nonatomic) NSInteger currentCount;
 @property (assign, nonatomic) NSInteger duringTime;
+
 @end
 
 @implementation DFLogManager
@@ -48,6 +50,15 @@ static DFLogManager *_instance;
         _instance = [[self alloc] init];
     });
     return _instance;
+}
+
+- (UITapGestureRecognizer *)tapGes {
+    
+    if (!_tapGes) {
+        _tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_bindCount)];
+    }
+    
+    return _tapGes;
 }
 
 - (instancetype)init {
@@ -95,19 +106,25 @@ static DFLogManager *_instance;
     }
 }
 
-- (void)bindControl:(UIControl *)control duringTime:(NSInteger)duringTime targetCount:(NSInteger)count {
+- (void)bindView:(UIView *)view duringTime:(NSInteger)duringTime targetCount:(NSInteger)count {
     
-    NSAssert([control isKindOfClass:[UIControl class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
+    NSAssert([view isKindOfClass:[UIView class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
     
-    if (_bindControl) {
-        [_bindControl removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    if ([_bindView isKindOfClass:[UIControl class]]) {
+        [((UIControl *)_bindView) removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
     }
-    
-    _bindControl = control;
+    _bindView = view;
     _targetCount = count;
     _duringTime = duringTime;
     _currentCount = 0;
-    [_bindControl addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    
+    if ([view isKindOfClass:[UIControl class]]) {
+        [((UIControl *)view) addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    }
+    else {
+        
+        [view addGestureRecognizer:self.tapGes];
+    }
 }
 
 - (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *))modifyBlock {

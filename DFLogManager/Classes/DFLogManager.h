@@ -28,13 +28,13 @@ typedef NS_ENUM(NSInteger, DFLogType) {
 
 + (instancetype)shareLogManager;
 
-/* 绑定某个控件，记录这个控件的点击次数，两次点击要在during时间内，否则次数重置，如果在这个时间段内达到count次数，则触发日志弹出
+/* 绑定某个视图，记录这个控件的点击次数，两次点击要在during时间内，否则次数重置，如果在这个时间段内达到count次数，则触发日志弹出
  
- * control：监听点击次数的对象，必传，且必须是UIControl的子类
+ * view：监听点击次数的对象，必传，且必须可交互
  * duringTime：两次连击的容忍范围，如果设为0，则不重置
  * count：必须大于0，否则没有意义，定义到达该次数，触发日志弹出
  */
-- (void)bindControl:(UIControl *)control duringTime:(NSInteger)duringTime targetCount:(NSInteger)count;
+- (void)bindView:(UIView *)view duringTime:(NSInteger)duringTime targetCount:(NSInteger)count;
 
 /* 设置顶部的输入内容，目前的用法是在顶部配置全局的base url，如果改变，通知全局切换接口环境，避免后台频繁要打包不同环境的应用程序
  * 只要调用了此方法，就提供文本输入框，不判断是否有content
