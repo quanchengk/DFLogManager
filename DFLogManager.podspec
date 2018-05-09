@@ -45,4 +45,5 @@ Pod::Spec.new do |s|
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'
+  s.dependency 'LSiOSPopView'
 end

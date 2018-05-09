@@ -210,7 +210,6 @@
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
 				0BBB305FA1463A668C1816EE /* [CP] Embed Pods Frameworks */,
-				22BC37F7EA2C6EAB92985C1A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -230,7 +229,6 @@
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
 				4A9473E4763221C50326A4EB /* [CP] Embed Pods Frameworks */,
-				E54A1864679B6A99B1FC50BB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -311,6 +309,8 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DFLogManager/DFLogManager.framework",
+				"${BUILT_PRODUCTS_DIR}/LSiOSPopView/LSiOSPopView.framework",
+				"${BUILT_PRODUCTS_DIR}/LSiOSTextView/LSiOSTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/UITableView+FDTemplateLayoutCell/UITableView_FDTemplateLayoutCell.framework",
@@ -318,6 +318,8 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DFLogManager.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSPopView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UITableView_FDTemplateLayoutCell.framework",
@@ -343,21 +345,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		22BC37F7EA2C6EAB92985C1A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3F9BD375F9656D9806DDBC45 /* [CP] Check Pods Manifest.lock */ = {
@@ -400,21 +387,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E54A1864679B6A99B1FC50BB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -560,9 +532,9 @@
 				GCC_PREFIX_HEADER = "DFLogManager/DFLogManager-Prefix.pch";
 				INFOPLIST_FILE = "DFLogManager/DFLogManager-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.LongShine.demo.DFLogManager-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.LongShine.DFLogManager-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5b3475b9-da2e-477b-ac5b-c52a24719160";
+				PROVISIONING_PROFILE = "846cb124-dcdf-43dd-9368-3a2d96e28127";
 				PROVISIONING_PROFILE_SPECIFIER = Guangzhou_development;
 				WRAPPER_EXTENSION = app;
 			};
@@ -579,7 +551,7 @@
 				GCC_PREFIX_HEADER = "DFLogManager/DFLogManager-Prefix.pch";
 				INFOPLIST_FILE = "DFLogManager/DFLogManager-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.LongShine.demo.DFLogManager-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.LongShine.DFLogManager-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;

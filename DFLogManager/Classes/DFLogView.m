@@ -9,6 +9,7 @@
 #import "DFLogView.h"
 #import "DFLogManager.h"
 #import <Masonry/Masonry.h>
+#import "LSPopKit.h"
 #import "DFLogTableView.h"
 
 #define DFScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
@@ -17,8 +18,15 @@
     
     DFLogTableView *_tableView;
     
+    UIButton *_resetBtn;
+    UIButton *_closeBtn;
+    
     UIPanGestureRecognizer *_moveGesture;
     UIPanGestureRecognizer *_scaleGesture;
+    
+    UITextField *_textField;
+    NSString *_oringalContent;  // 原始的文本内容，用于编辑后弹框提示是否更改
+    void (^_modifyTopTextFieldBlock)(NSString *text);
 }
 
 @property (retain, nonatomic) UIView *scaleView;
@@ -109,6 +117,24 @@ static DFLogView *_instance;
         }];
         
         [resetBtn addTarget:self action:@selector(reset) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([DFLogManager shareLogManager].mode == DFLogTypeRelease) {
+            
+            UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+            [closeBtn setTitle:@"关闭" forState:UIControlStateNormal];
+            [self addSubview:closeBtn];
+            [closeBtn addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
+            [closeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                
+                make.right.offset(-15);
+                make.top.bottom.equalTo(resetBtn);
+                make.size.equalTo(resetBtn);
+            }];
+            
+            _closeBtn = closeBtn;
+        }
+        
+        _resetBtn = resetBtn;
     }
     return self;
 }
@@ -260,6 +286,72 @@ static DFLogView *_instance;
     NSMutableIndexSet *set = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _tableView.items.count)];
     [_tableView.items removeAllObjects];
     [_tableView deleteSections:set withRowAnimation:UITableViewRowAnimationNone];
+}
+
+- (void)deleteIndexes:(NSIndexSet *)indexSet {
+    NSIndexSet *deleteIndexSet = [indexSet indexesWithOptions:0 passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if (idx >= _tableView.items.count) {
+            return NO;
+        }
+        return YES;
+    }];
+    
+    [_tableView.items removeObjectsAtIndexes:deleteIndexSet];
+    [_tableView reloadData];
+}
+
+- (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *))modifyBlock {
+    
+    _oringalContent = content;
+    _modifyTopTextFieldBlock = modifyBlock;
+    
+    if (!_textField) {
+        
+        _textField = [UITextField new];
+        _textField.textColor = [UIColor blueColor];
+        _textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        _textField.font = [UIFont systemFontOfSize:12];
+        _textField.backgroundColor = [UIColor whiteColor];
+        _textField.placeholder = @"请输入内容";
+        [_textField addTarget:self action:@selector(_editFinish) forControlEvents:UIControlEventEditingDidEnd];
+        [_textField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+        _textField.returnKeyType = UIReturnKeyDone;
+        _textField.keyboardType = UIKeyboardTypeURL;
+        [self addSubview:_textField];
+        [_textField mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.left.equalTo(_resetBtn.mas_right);
+            make.right.equalTo(_closeBtn ? _closeBtn.mas_left : self).offset(_closeBtn ? 0 : -40);
+            make.top.bottom.equalTo(_resetBtn);
+        }];
+    }
+    
+    _textField.text = content;
+}
+
+- (void)_editFinish {
+    
+    if (![_textField.text isEqualToString:_oringalContent]) {
+        
+        LSAlertView *alert = [[LSAlertView alloc] initWithStyle:LSAlertStyleTitleContent title:@"请确定当前编辑内容" message:_textField.text];
+        LSPopAction *cancel = [LSPopAction actionWithTitle:@"还原，不修改" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
+            _textField.text = _oringalContent;
+        }];
+        LSPopAction *modify = [LSPopAction actionWithTitle:@"继续编辑" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
+            [_textField becomeFirstResponder];
+        }];
+        LSPopAction *ok = [LSPopAction actionWithTitle:@"确定" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
+            
+            if (_modifyTopTextFieldBlock) {
+                _modifyTopTextFieldBlock(_textField.text);
+            }
+            
+            _oringalContent = _textField.text;
+        }];
+        [alert addActions:@[cancel, modify, ok]];
+        [alert show];
+    }
 }
 
 /*

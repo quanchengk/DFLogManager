@@ -11,9 +11,18 @@
 #import "DFLogView.h"
 #import "DFLogCircleView.h"
 
+#define kDFReleaseNormalCount 50 // 日志保留正常条目的条数
+#define kDFReleaseErrorCount 20  // 日志保留异常条目的条数
 @interface DFLogManager ()
 
 @property (retain, nonatomic) DFLogCircleView *suspensionWindow;
+
+@property (retain, nonatomic) UIView *bindView;
+@property (retain, nonatomic) UITapGestureRecognizer *tapGes;
+@property (assign, nonatomic) NSInteger targetCount;
+@property (assign, nonatomic) NSInteger currentCount;
+@property (assign, nonatomic) NSInteger duringTime;
+
 @end
 
 @implementation DFLogManager
@@ -26,8 +35,8 @@ void UncaughtExceptionHandler(NSException *exception) {
     DFLogModel *model = [DFLogModel new];
     model.selector = [NSString stringWithFormat:@"系统闪退：%@", name];
     model.requestObject = reason;
-    model.responseObject = [DFLogManager stringWithJsonValue:arr];
-    model.error = [DFLogManager stringWithJsonValue:exception.userInfo];
+    model.responseObject = [DFLogManager _stringWithJsonValue:arr];
+    model.error = [DFLogManager _stringWithJsonValue:exception.userInfo];
     
     [[DFLogManager shareLogManager] addLogModel:model];
 }
@@ -42,6 +51,15 @@ static DFLogManager *_instance;
     return _instance;
 }
 
+- (UITapGestureRecognizer *)tapGes {
+    
+    if (!_tapGes) {
+        _tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_bindCount)];
+    }
+    
+    return _tapGes;
+}
+
 - (instancetype)init {
     
     if (self = [super init]) {
@@ -54,22 +72,68 @@ static DFLogManager *_instance;
     return self;
 }
 
-- (void)setDebugMode:(BOOL)debugMode {
+- (DFLogCircleView *)suspensionWindow {
     
-    if (_debugMode != debugMode) {
+    if (!_suspensionWindow) {
         
-        _debugMode = debugMode;
-        
-        if (debugMode) {
-            
-            DFLogCircleView *circleView = [[DFLogCircleView alloc] initWithFrame:CGRectZero];
-            [circleView show];
-            self.suspensionWindow = circleView;
-        }
+        DFLogCircleView *circleView = [[DFLogCircleView alloc] initWithFrame:CGRectZero];
+        _suspensionWindow = circleView;
+    }
+    return _suspensionWindow;
+}
+
+- (void)setMode:(DFLogType)mode {
+    
+    _mode = mode;
+    switch (mode) {
+        case DFLogTypeNone:
+            [_suspensionWindow resignKeyWindow];
+            [self reset];
+            break;
+        case DFLogTypeDebug:
+            [self.suspensionWindow show];
+            break;
+        case DFLogTypeRelease:
+            [_suspensionWindow resignKeyWindow];
+            // 保留固定条目
+            [self _saveModelCountFrom:0 accrodingLimit:YES];
+            break;
+        default:
+            break;
     }
 }
 
+- (void)bindView:(UIView *)view duringTime:(NSInteger)duringTime targetCount:(NSInteger)count {
+    
+    NSAssert([view isKindOfClass:[UIView class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
+    
+    if ([_bindView isKindOfClass:[UIControl class]]) {
+        [((UIControl *)_bindView) removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    }
+    _bindView = view;
+    _targetCount = count;
+    _duringTime = duringTime;
+    _currentCount = 0;
+    
+    if ([view isKindOfClass:[UIControl class]]) {
+        [((UIControl *)view) addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+    }
+    else {
+        
+        [view addGestureRecognizer:self.tapGes];
+    }
+}
+
+- (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *))modifyBlock {
+    
+    [[DFLogView shareLogView] textFieldContent:content modifyBlock:modifyBlock];
+}
+
 - (void)addLogModel:(DFLogModel *)logModel {
+    
+    if (self.mode == DFLogTypeNone) {
+        return;
+    }
     
     DFLogView *logerView = [DFLogView shareLogView];
     
@@ -77,10 +141,10 @@ static DFLogManager *_instance;
     logModel.occurTime = [NSDate date];
     
     if (![logModel.requestObject isKindOfClass:[NSString class]]) {
-        logModel.requestObject = [DFLogManager stringWithJsonValue:logModel.requestObject];
+        logModel.requestObject = [DFLogManager _stringWithJsonValue:logModel.requestObject];
     }
     if (![logModel.responseObject isKindOfClass:[NSString class]]) {
-        logModel.responseObject = [DFLogManager stringWithJsonValue:logModel.responseObject];
+        logModel.responseObject = [DFLogManager _stringWithJsonValue:logModel.responseObject];
     }
     
     @try {
@@ -108,17 +172,125 @@ static DFLogManager *_instance;
         
         [logerView add:logModel];
     }
+    
+    if (self.mode == DFLogTypeRelease) {
+        
+        // 保留固定条目
+        [self _saveModelCountFrom:0 accrodingLimit:YES];
+    }
 }
 
+// 清空
 - (void)reset {
     
     BOOL res = [_dbManager deleteAllModel];
     if (res) {
         [[DFLogView shareLogView] deleteAll];
     }
+    [self _saveModelCountFrom:0 accrodingLimit:NO];
 }
 
-+ (NSString *)stringWithJsonValue:(id)obj
+- (void)_bindCount {
+    
+    if (_duringTime > 0) {
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [self performSelector:@selector(_resetCount) withObject:nil afterDelay:_duringTime];
+    }
+    
+    NSLog(@"--------------- %ld", (long)_currentCount);
+    if (++_currentCount >= _targetCount) {
+        
+        [[DFLogView shareLogView] showComplete:^{
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self];
+            [self _resetCount];
+        }];
+    }
+}
+
+- (void)_resetCount {
+    
+    _currentCount = 0;
+}
+
+// 从fromIndex开始移除日志，是否根据宏定义的个数约束条目
+- (void)_saveModelCountFrom:(NSInteger)fromIndex accrodingLimit:(BOOL)accroding {
+//
+//    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
+//    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+//    NSMutableArray *objects = [NSMutableArray array];
+//    NSInteger errorCount = 0;
+//    NSInteger normalCount = 0;
+//    for (NSInteger i = 0; i < result.count; i++) {
+//
+//        DFLogModel *model = [result objectAtIndex:i];
+//
+//        if (accroding) {
+//
+//            if (self.mode == DFLogTypeRelease) {
+//
+//                // 常规记录个数
+//                // 超过阈值，开始把下标记录进要删除的数组容器
+//                if (model.error.length > 0) {
+//
+//                    if (++errorCount > kDFReleaseErrorCount) {
+//
+//                        [objects addObject:model];
+//                        [indexes addIndex:i];
+//                    }
+//                }
+//                else {
+//
+//                    if (++normalCount > kDFReleaseNormalCount) {
+//
+//                        [objects addObject:model];
+//                        [indexes addIndex:i];
+//                    }
+//                }
+//            }
+//            else if (i > fromIndex || self.mode == DFLogTypeNone) {
+//
+//                switch (self.mode) {
+//                    case DFLogTypeNone:
+//                    case DFLogTypeDebug:
+//                        // DFLogTypeNone全部删
+//                        // DFLogTypeDebug 调用fromIndex后全部删
+//                        [objects addObject:model];
+//                        [indexes addIndex:i];
+//                        break;
+//                    case DFLogTypeRelease:
+//
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        }
+//        else {
+//
+//            [objects addObject:model];
+//            [indexes addIndex:i];
+//        }
+//    }
+//
+//    @try {
+//
+//        [[DFLogView shareLogView] deleteIndexes:indexes];
+//        [_realm transactionWithBlock:^{
+//
+//            [_realm deleteObjects:objects];
+//        }];
+//    } @catch (NSException *exception) {
+//
+//        NSLog(@"%@", exception);
+//    } @finally {
+//
+//>>>>>>> Realm
+//    }
+}
+
++ (NSString *)_stringWithJsonValue:(id)obj
 {
     if (!obj) {
         

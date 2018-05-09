@@ -49,6 +49,10 @@
     _content.text = _showStr;
 }
 
+-(BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
 @end
 
 @interface DFLogerTableViewHeader : UITableViewHeaderFooterView {
@@ -57,6 +61,7 @@
     UILabel *_timeLB;
     UIButton *_bgBtn;
     UIActivityIndicatorView *_indicatorView;
+    UILongPressGestureRecognizer *_longPressGes;
 }
 
 @property (assign, nonatomic) BOOL showWaitingView;
@@ -72,6 +77,10 @@
         
         _bgBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_bgBtn addTarget:self action:@selector(click) forControlEvents:UIControlEventTouchUpInside];
+        
+        _longPressGes = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(copyAction)];
+        _longPressGes.minimumPressDuration = .5;
+        [_bgBtn addGestureRecognizer:_longPressGes];
         
         UILabel *titleLB = [UILabel new];
         titleLB.font = [UIFont systemFontOfSize:12];
@@ -180,6 +189,65 @@
             [self.delegate deselectHeaderViewAt:self];
         });
     }
+    
+    UIMenuController* menuController = [UIMenuController sharedMenuController];
+    if (menuController.isMenuVisible) {
+        [menuController setMenuVisible:NO animated:YES];
+    }
+}
+
+#pragma mark - 剪切板操作
+- (void)copyAction {
+    
+    switch (_longPressGes.state) {
+        case UIGestureRecognizerStateBegan:
+        {
+            [self becomeFirstResponder];
+            
+            UIMenuItem *menuitem_01 = [[UIMenuItem alloc] initWithTitle:@"复制本条" action:@selector(copySelf)];
+            UIMenuItem *menuitem_02 = [[UIMenuItem alloc] initWithTitle:@"复制出入参" action:@selector(copyAll)];
+            
+            UIMenuController* menuController = [UIMenuController sharedMenuController];
+            menuController.menuItems = [NSArray arrayWithObjects:menuitem_01, menuitem_02, nil];
+            [menuController setTargetRect:_bgBtn.frame inView:self];
+            [menuController setMenuVisible:YES animated:YES];
+            
+            self.contentView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.2];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuDismiss) name:UIMenuControllerWillHideMenuNotification object:nil];
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+
+-(BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
+-(void)copySelf{
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setString:_model.selector];
+}
+
+- (void)copyAll {
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setString:[NSString stringWithFormat:@"%@\n%@", _model.selector, [_model.contentSeperateArr componentsJoinedByString:@"\n"]]];
+}
+
+- (void)menuDismiss {
+    
+    if (_model.error.length) {
+        
+        self.contentView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.6];
+    }
+    else
+        
+        self.contentView.backgroundColor = [UIColor whiteColor];
+    
+    [self resignFirstResponder];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIMenuControllerWillHideMenuNotification object:nil];
 }
 
 @end
@@ -204,23 +272,38 @@
         MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             
             [_items removeAllObjects];
-            [_items addObjectsFromArray:[[DFLogManager shareLogManager].dbManager getModelFrom:_items.count to:10]];
-            [self reloadData];
-            [self.mj_header endRefreshing];
+            [self loadData];
         }];
         self.mj_header = header;
         
         MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
             
-            [_items addObjectsFromArray:[[DFLogManager shareLogManager].dbManager getModelFrom:_items.count to:10]];
-            [self reloadData];
-            [self.mj_footer endRefreshing];
+            [self loadData];
         }];
         self.mj_footer = footer;
         
         [self.mj_header beginRefreshing];
     }
     return self;
+}
+
+- (void)loadData {
+    
+    NSInteger pageSize = 10;
+    NSArray *items = [[DFLogManager shareLogManager].dbManager getModelFrom:_items.count to:pageSize];
+    [_items addObjectsFromArray:items];
+    
+    if (self.mj_header.isRefreshing) {
+        [self.mj_header endRefreshing];
+    }
+    if (items.count < pageSize) {
+        // 没有填满一页，则视为没有更多，防止没有尽头的上拉刷新
+        [self.mj_footer endRefreshingWithNoMoreData];
+    }
+    else {
+        [self.mj_footer endRefreshing];
+    }
+    [self reloadData];
 }
 
 #pragma mark - tableview delegate
@@ -285,6 +368,56 @@
     
     DFLogerTableViewHeader *header = (DFLogerTableViewHeader *)[tableView headerViewForSection:indexPath.section];
     header.showWaitingView = NO;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    DFLogerTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (cell.showStr.length) {
+        
+        [cell becomeFirstResponder];
+        
+        UIMenuItem *menuitem_01 = [[UIMenuItem alloc] initWithTitle:@"复制" action:@selector(copySelf)];
+        
+        UIMenuController* menuController = [UIMenuController sharedMenuController];
+        menuController.menuItems = [NSArray arrayWithObjects:menuitem_01, nil];
+        [menuController setTargetRect:cell.frame inView:self];
+        [menuController setMenuVisible:YES animated:YES];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuDismiss) name:UIMenuControllerWillHideMenuNotification object:nil];
+    }
+    else {
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    }
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    DFLogerTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [cell resignFirstResponder];
+    return indexPath;
+}
+
+-(void)copySelf {
+    
+    // 复制到粘贴板
+    NSIndexPath *indexPath = self.indexPathForSelectedRow;
+    DFLogModel *model = _items[indexPath.section];
+    NSString *showStr = model.contentSeperateArr[indexPath.row];
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setString:showStr];
+}
+
+- (void)menuDismiss {
+    
+    // 取消选中
+    NSIndexPath *indexPath = self.indexPathForSelectedRow;
+    [self deselectRowAtIndexPath:indexPath animated:YES];
+    DFLogerTableViewCell *cell = [self cellForRowAtIndexPath:indexPath];
+    [cell resignFirstResponder];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIMenuControllerWillHideMenuNotification object:nil];
 }
 
 #pragma mark - DFLogerDelegate

@@ -10,6 +10,19 @@
 
 @implementation DFLogModel
 
+- (id)copyWithZone:(NSZone *)zone {
+    
+    DFLogModel *model = [[[self class] allocWithZone:zone] init];
+    model.requestID = self.requestID;
+    model.selector = self.selector;
+    model.error = self.error;
+    model.requestObject = self.requestObject;
+    model.responseObject = self.responseObject;
+    model.occurTime = self.occurTime;
+    
+    return model;
+}
+
 - (NSString *)error {
     
     if (!_error) {

@@ -147,14 +147,12 @@ static CGFloat circleWidth = 32;
     }
     else {
         
-        NSLog(@"开始展示%@", [NSDate date]);
         btn.hidden = YES;
         [self.indicatorView startAnimating];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             [[DFLogView shareLogView] showComplete:^{
                 
-                NSLog(@"结束展示%@", [NSDate date]);
                 btn.hidden = NO;
                 [self.indicatorView stopAnimating];
             }];
