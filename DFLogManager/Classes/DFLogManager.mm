@@ -11,8 +11,7 @@
 #import "DFLogView.h"
 #import "DFLogCircleView.h"
 
-#define kDFReleaseNormalCount 50 // 日志保留正常条目的条数
-#define kDFReleaseErrorCount 20  // 日志保留异常条目的条数
+#define kDFReleaseCount 10 // 日志保留正常条目的条数
 @interface DFLogManager ()
 
 @property (retain, nonatomic) DFLogCircleView *suspensionWindow;
@@ -96,7 +95,7 @@ static DFLogManager *_instance;
         case DFLogTypeRelease:
             [_suspensionWindow resignKeyWindow];
             // 保留固定条目
-            [self _saveModelCountFrom:0 accrodingLimit:YES];
+            [self _saveModelCountFrom:kDFReleaseCount];
             break;
         default:
             break;
@@ -176,7 +175,7 @@ static DFLogManager *_instance;
     if (self.mode == DFLogTypeRelease) {
         
         // 保留固定条目
-        [self _saveModelCountFrom:0 accrodingLimit:YES];
+        [self _saveModelCountFrom:kDFReleaseCount];
     }
 }
 
@@ -187,7 +186,6 @@ static DFLogManager *_instance;
     if (res) {
         [[DFLogView shareLogView] deleteAll];
     }
-    [self _saveModelCountFrom:0 accrodingLimit:NO];
 }
 
 - (void)_bindCount {
@@ -215,79 +213,21 @@ static DFLogManager *_instance;
 }
 
 // 从fromIndex开始移除日志，是否根据宏定义的个数约束条目
-- (void)_saveModelCountFrom:(NSInteger)fromIndex accrodingLimit:(BOOL)accroding {
-//
-//    RLMResults *result = [[DFLogModel allObjectsInRealm:_realm] sortedResultsUsingKeyPath:@"requestID" ascending:NO];
-//    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
-//    NSMutableArray *objects = [NSMutableArray array];
-//    NSInteger errorCount = 0;
-//    NSInteger normalCount = 0;
-//    for (NSInteger i = 0; i < result.count; i++) {
-//
-//        DFLogModel *model = [result objectAtIndex:i];
-//
-//        if (accroding) {
-//
-//            if (self.mode == DFLogTypeRelease) {
-//
-//                // 常规记录个数
-//                // 超过阈值，开始把下标记录进要删除的数组容器
-//                if (model.error.length > 0) {
-//
-//                    if (++errorCount > kDFReleaseErrorCount) {
-//
-//                        [objects addObject:model];
-//                        [indexes addIndex:i];
-//                    }
-//                }
-//                else {
-//
-//                    if (++normalCount > kDFReleaseNormalCount) {
-//
-//                        [objects addObject:model];
-//                        [indexes addIndex:i];
-//                    }
-//                }
-//            }
-//            else if (i > fromIndex || self.mode == DFLogTypeNone) {
-//
-//                switch (self.mode) {
-//                    case DFLogTypeNone:
-//                    case DFLogTypeDebug:
-//                        // DFLogTypeNone全部删
-//                        // DFLogTypeDebug 调用fromIndex后全部删
-//                        [objects addObject:model];
-//                        [indexes addIndex:i];
-//                        break;
-//                    case DFLogTypeRelease:
-//
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        }
-//        else {
-//
-//            [objects addObject:model];
-//            [indexes addIndex:i];
-//        }
-//    }
-//
-//    @try {
-//
-//        [[DFLogView shareLogView] deleteIndexes:indexes];
-//        [_realm transactionWithBlock:^{
-//
-//            [_realm deleteObjects:objects];
-//        }];
-//    } @catch (NSException *exception) {
-//
-//        NSLog(@"%@", exception);
-//    } @finally {
-//
-//>>>>>>> Realm
-//    }
+- (void)_saveModelCountFrom:(NSInteger)fromIndex {
+    
+    NSInteger maxCount = [_dbManager maxCountFromDB];
+    NSMutableIndexSet *set = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(fromIndex, maxCount)];
+    
+    @try {
+        
+        [_dbManager deleteFromIndex:fromIndex toIndex:maxCount];
+    } @catch (NSException *exception) {
+        
+        NSLog(@"%@", exception);
+    } @finally {
+        
+        [[DFLogView shareLogView] deleteIndexes:set];
+    }
 }
 
 + (NSString *)_stringWithJsonValue:(id)obj

@@ -296,7 +296,7 @@
     if (self.mj_header.isRefreshing) {
         [self.mj_header endRefreshing];
     }
-    if (items.count < pageSize) {
+    if (_items.count == [[DFLogManager shareLogManager].dbManager maxCountFromDB]) {
         // 没有填满一页，则视为没有更多，防止没有尽头的上拉刷新
         [self.mj_footer endRefreshingWithNoMoreData];
     }

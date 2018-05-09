@@ -62,9 +62,10 @@
     sqlite3_stmt *stmt = NULL;
     
     NSString *sql = [NSString stringWithFormat:@"select * from log order by occur_time DESC limit %ld, %ld", fromIndex, toIndex];
+    NSMutableArray *dataArray;
     if (sqlite3_prepare(_db, [sql UTF8String], -1, &stmt, NULL) == SQLITE_OK) {
         
-        NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+        dataArray = [[NSMutableArray alloc] init];
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -81,33 +82,73 @@
             model.occurTime = [NSDate dateWithTimeIntervalSince1970:interval];
             [dataArray addObject:model];
         }
-        return dataArray;
+        
     }
     
-    return nil;
+    sqlite3_finalize(stmt);
+    sqlite3_close(_db);
+    return dataArray;
+}
+
+- (NSInteger)maxCountFromDB {
+    
+    sqlite3_open([[self dbFilePath] UTF8String], &_db);
+    sqlite3_stmt *stmt = NULL;
+    
+    NSString *sql = @"select count (*) from log";
+    NSInteger count = 0;
+    if (sqlite3_prepare(_db, [sql UTF8String], -1, &stmt, NULL) == SQLITE_OK) {
+        
+        while (sqlite3_step(stmt)==SQLITE_ROW) {
+            
+            count = sqlite3_column_int(stmt,0);
+            break;
+        }
+    }
+    
+    sqlite3_finalize(stmt);
+    sqlite3_close(_db);
+    return count;
 }
 
 - (BOOL)saveModel:(DFLogModel *)logModel {
     
+    sqlite3_open([[self dbFilePath] UTF8String], &_db);
+    
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO log(selector, request_object, response_object, occur_time, error) VALUES ('%@','%@','%@','%f','%@');", logModel.selector, logModel.requestObject, logModel.responseObject, logModel.occurTime.timeIntervalSince1970, logModel.error];
     char *err = NULL;
     int result = sqlite3_exec(_db, [sql UTF8String], NULL, NULL, &err);
+    
+    sqlite3_close(_db);
     return result == SQLITE_OK;
 }
 
 - (BOOL)deleteModel:(DFLogModel *)logModel {
     
+    sqlite3_open([[self dbFilePath] UTF8String], &_db);
     NSString *sql = [NSString stringWithFormat:@"DELETE FROM log WHERE request_id = %@",logModel.requestID];
     char *err = NULL;
     int result = sqlite3_exec(_db, [sql UTF8String], NULL, NULL, &err);
+    sqlite3_close(_db);
     return result == SQLITE_OK;
+}
+
+- (void)deleteFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
+    
+    NSArray<DFLogModel *> *models = [self getModelFrom:fromIndex to:toIndex];
+    [models enumerateObjectsUsingBlock:^(DFLogModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        [self deleteModel:obj];
+    }];
 }
 
 - (BOOL)deleteAllModel {
     
+    sqlite3_open([[self dbFilePath] UTF8String], &_db);
     NSString *sql = @"delete from log";
     char *err = NULL;
     int result = sqlite3_exec(_db, [sql UTF8String], NULL, NULL, &err);
+    sqlite3_close(_db);
     return result == SQLITE_OK;
 }
 

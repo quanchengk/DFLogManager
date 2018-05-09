@@ -14,7 +14,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [DFLogManager shareLogManager].mode = DFLogTypeDebug;
+    [DFLogManager shareLogManager].mode = DFLogTypeRelease;
     [[DFLogManager shareLogManager] textFieldContent:@"https://www.baidu.com" modifyBlock:^(NSString *text) {
 
         NSLog(@"%@", text);
