@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = '日志控件'
 
   s.description      = <<-DESC
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.resources = 'DFLogManager/Assets/*.{png,bundle,plist}'    #引用其他资源文件
   
   s.frameworks = 'UIKit', 'Foundation'
-  
+  s.libraries = 'c++'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'
