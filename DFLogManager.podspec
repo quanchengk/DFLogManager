@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = '日志控件'
 
 # This description is used to generate tags and improve search results.
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 利用realm进行本地缓存的日志控件
-更新内容：新增复制功能
+更新内容：指定realm版本
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  s.dependency 'Realm'
+  s.dependency 'Realm', '~> 3.5.0'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'
