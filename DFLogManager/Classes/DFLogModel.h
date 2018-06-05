@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MJExtension/MJExtension.h>
 
 @interface DFLogModel : NSObject
 
-@property (nonatomic, retain) NSNumber *requestID;
+@property (nonatomic, assign) NSInteger requestID;
 @property (nonatomic, copy) NSString *selector;
 @property (nonatomic, copy) NSString *error;
 @property (nonatomic, copy) NSString *requestObject;

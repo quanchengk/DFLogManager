@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-利用sqlite3进行本地缓存的日志控件
-更新内容：优化交互体验，数据库由realm调整为sqlite3
+利用NSUserDefault进行本地缓存的日志控件
+更新内容：优化交互体验，数据库调整为NSUserDefault
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
@@ -40,10 +40,11 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
 #s.frameworks = 'UIKit'
-  s.ios.library = 'sqlite3'
+#s.ios.library = 'sqlite3'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'
+  s.dependency 'MJExtension'
   s.dependency 'LSiOSPopView'
 end

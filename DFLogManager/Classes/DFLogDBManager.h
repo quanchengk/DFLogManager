@@ -12,7 +12,7 @@
 
 @property (assign, nonatomic) NSInteger maxLogerCount;
 
-- (NSArray *)getModelFrom:(NSInteger)fromIndex to:(NSInteger)toIndex;
+- (NSArray<DFLogModel *> *)getModelFrom:(NSInteger)fromIndex to:(NSInteger)toIndex;
 - (NSInteger)maxCountFromDB;
 
 - (BOOL)saveModel:(DFLogModel *)logModel;

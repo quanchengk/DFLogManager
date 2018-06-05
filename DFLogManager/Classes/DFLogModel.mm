@@ -42,5 +42,10 @@
     return _contentSeperateArr;
 }
 
++ (NSArray *)mj_ignoredPropertyNames {
+    
+    return @[@"selected", @"contentSeperateArr"];
+}
+
 @end
 
