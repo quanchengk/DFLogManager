@@ -11,7 +11,7 @@
 
 @interface DFLogModel : NSObject
 
-@property (nonatomic, assign) NSInteger requestID;
+@property (nonatomic, retain) NSNumber *requestID;
 @property (nonatomic, copy) NSString *selector;
 @property (nonatomic, copy) NSString *error;
 @property (nonatomic, copy) NSString *requestObject;

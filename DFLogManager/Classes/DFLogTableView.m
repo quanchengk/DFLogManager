@@ -270,7 +270,7 @@
         
         MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             
-            [_items removeAllObjects];
+            [self.items removeAllObjects];
             [self loadData];
         }];
         self.mj_header = header;
@@ -347,7 +347,7 @@
     
     return [tableView fd_heightForCellWithIdentifier:@"DFLogerTableViewCell" configuration:^(DFLogerTableViewCell *cell) {
         
-        DFLogModel *model = _items[indexPath.section];
+        DFLogModel *model = self -> _items[indexPath.section];
         cell.showStr = model.contentSeperateArr[indexPath.row];
     }];
 }

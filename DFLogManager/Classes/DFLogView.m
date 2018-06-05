@@ -159,7 +159,7 @@ static DFLogView *_instance;
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
-                CGPoint currentPoint = [_moveGesture locationInView:self.superview];
+                CGPoint currentPoint = [self -> _moveGesture locationInView:self.superview];
                 
                 CGRect frame = startFrame;
                 double x = currentPoint.x - startPoint.x + startFrame.origin.x;
@@ -214,26 +214,26 @@ static DFLogView *_instance;
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
-                CGPoint currentPoint = [_scaleGesture locationInView:self.superview];
+                CGPoint currentPoint = [self -> _scaleGesture locationInView:self.superview];
                 CGRect frame = startFrame;
                 
                 CGFloat toWidth = currentPoint.x - startFrame.origin.x;
-                if (toWidth < _scaleGesture.view.frame.size.width) {
+                if (toWidth < self -> _scaleGesture.view.frame.size.width) {
                     
-                    toWidth = _scaleGesture.view.frame.size.width;
+                    toWidth = self -> _scaleGesture.view.frame.size.width;
                 }
                 
                 CGFloat toHeight = currentPoint.y - startFrame.origin.y;
-                if (toHeight < _scaleGesture.view.frame.size.height) {
+                if (toHeight < self -> _scaleGesture.view.frame.size.height) {
                     
-                    toHeight = _scaleGesture.view.frame.size.height;
+                    toHeight = self -> _scaleGesture.view.frame.size.height;
                 }
                 
                 frame.size = CGSizeMake(toWidth, toHeight);
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    _scaleView.frame = frame;
+                    self -> _scaleView.frame = frame;
                 });
             });
             break;
@@ -291,7 +291,7 @@ static DFLogView *_instance;
 - (void)deleteIndexes:(NSIndexSet *)indexSet {
     NSIndexSet *deleteIndexSet = [indexSet indexesWithOptions:0 passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) {
         
-        if (idx >= _tableView.items.count) {
+        if (idx >= self -> _tableView.items.count) {
             return NO;
         }
         return YES;
@@ -321,9 +321,9 @@ static DFLogView *_instance;
         [self addSubview:_textField];
         [_textField mas_makeConstraints:^(MASConstraintMaker *make) {
             
-            make.left.equalTo(_resetBtn.mas_right);
-            make.right.equalTo(_closeBtn ? _closeBtn.mas_left : self).offset(_closeBtn ? 0 : -40);
-            make.top.bottom.equalTo(_resetBtn);
+            make.left.equalTo(self -> _resetBtn.mas_right);
+            make.right.equalTo(self -> _closeBtn ? self -> _closeBtn.mas_left : self).offset(self -> _closeBtn ? 0 : -40);
+            make.top.bottom.equalTo(self -> _resetBtn);
         }];
     }
     
@@ -336,18 +336,18 @@ static DFLogView *_instance;
         
         LSAlertView *alert = [[LSAlertView alloc] initWithStyle:LSAlertStyleTitleContent title:@"请确定当前编辑内容" message:_textField.text];
         LSPopAction *cancel = [LSPopAction actionWithTitle:@"还原，不修改" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
-            _textField.text = _oringalContent;
+            self -> _textField.text = self -> _oringalContent;
         }];
         LSPopAction *modify = [LSPopAction actionWithTitle:@"继续编辑" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
-            [_textField becomeFirstResponder];
+            [self -> _textField becomeFirstResponder];
         }];
         LSPopAction *ok = [LSPopAction actionWithTitle:@"确定" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
             
-            if (_modifyTopTextFieldBlock) {
-                _modifyTopTextFieldBlock(_textField.text);
+            if (self -> _modifyTopTextFieldBlock) {
+                self -> _modifyTopTextFieldBlock(self -> _textField.text);
             }
             
-            _oringalContent = _textField.text;
+            self -> _oringalContent = self -> _textField.text;
         }];
         [alert addActions:@[cancel, modify, ok]];
         [alert show];

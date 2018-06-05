@@ -12,6 +12,7 @@
     
     // 始终都在操作同一个对象，避免反复从内存中取
     NSMutableArray *_datas;
+    NSString *_key;
 }
 
 @end
@@ -22,7 +23,8 @@
     
     if (self = [super init]) {
         
-        _datas = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"df_log_models"]];
+        _key = @"df_log_models";
+        _datas = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:_key]];
         
         [_datas sortUsingComparator:^NSComparisonResult(NSDictionary * _Nonnull obj1, NSDictionary * _Nonnull obj2) {
             
@@ -64,10 +66,10 @@
         // 判重，如果是重复的，覆盖
         for (NSInteger i = 0; i < _datas.count; i++) {
             
-            if (logModel.requestID == [_datas[i][@"requestID"] integerValue]) {
+            if ([logModel.requestID integerValue] == [_datas[i][@"requestID"] integerValue]) {
                 
                 [_datas replaceObjectAtIndex:i withObject:logModel];
-                [userDefaults setObject:_datas forKey:@"df_log_models"];
+                [userDefaults setObject:_datas forKey:_key];
                 [userDefaults synchronize];
                 res = YES;
                 break;
@@ -78,17 +80,17 @@
         
         if (_datas.count) {
             
-            logModel.requestID = [[_datas firstObject][@"requestID"] integerValue] + 1;
+            logModel.requestID = @([[_datas firstObject][@"requestID"] integerValue] + 1);
             [_datas insertObject:logModel.mj_keyValues atIndex:0];
         }
         else {
             
-            logModel.requestID = 1;
+            logModel.requestID = @(1);
 
             [_datas addObject:logModel.mj_keyValues];
         }
         
-        [userDefaults setObject:_datas forKey:@"df_log_models"];
+        [userDefaults setObject:_datas forKey:_key];
         [userDefaults synchronize];
         res = YES;
     }
@@ -106,16 +108,16 @@
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     for (NSInteger i = 0; i < _datas.count; i++) {
         
-        if (logModel.requestID == [_datas[i][@"requestID"] integerValue]) {
+        if ([logModel.requestID integerValue] == [_datas[i][@"requestID"] integerValue]) {
             
             [_datas removeObjectAtIndex:i];
-            [userDefaults setObject:_datas forKey:@"df_log_models"];
+            [userDefaults setObject:_datas forKey:_key];
             [userDefaults synchronize];
             return YES;
         }
     }
     
-    NSLog(@"未找到记录%ld", logModel.requestID);
+    NSLog(@"未找到记录%@", logModel.requestID);
     return NO;
 }
 
@@ -133,7 +135,7 @@
     [_datas removeAllObjects];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults removeObjectForKey:@"df_log_models"];
+    [userDefaults removeObjectForKey:_key];
     [userDefaults synchronize];
     return YES;
 }

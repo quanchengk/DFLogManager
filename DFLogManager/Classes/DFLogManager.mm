@@ -196,7 +196,6 @@ static DFLogManager *_instance;
         [self performSelector:@selector(_resetCount) withObject:nil afterDelay:_duringTime];
     }
     
-    NSLog(@"--------------- %ld", (long)_currentCount);
     if (++_currentCount >= _targetCount) {
         
         [[DFLogView shareLogView] showComplete:^{
