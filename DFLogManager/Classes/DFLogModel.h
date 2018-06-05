@@ -20,6 +20,6 @@
 
 //cell用到的属性，区分当前数据是否已被选中
 @property (assign, nonatomic) BOOL selected;
-//@property (retain, nonatomic) NSArray *contentSeperateArr;   // 展示在文本区的内容
+@property (retain, nonatomic) NSArray *contentSeperateArr;   // 展示在文本区的内容
 @end
 
