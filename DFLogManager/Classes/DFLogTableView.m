@@ -232,7 +232,7 @@
 
 - (void)copyAll {
     UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-    [pasteboard setString:[NSString stringWithFormat:@"%@\n%@", _model.selector, [_model.contentSeperateArr componentsJoinedByString:@"\n"]]];
+//    [pasteboard setString:[NSString stringWithFormat:@"%@\n%@", _model.selector, [_model.contentSeperateArr componentsJoinedByString:@"\n"]]];
 }
 
 - (void)menuDismiss {
@@ -313,16 +313,17 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    DFLogModel *model = _items[section];
-    
-    return model.selected ? model.contentSeperateArr.count : 0;
+//    DFLogModel *model = _items[section];
+//
+//    return model.selected ? model.contentSeperateArr.count : 0;
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     DFLogModel *model = _items[indexPath.section];
     DFLogerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DFLogerTableViewCell"];
-    cell.showStr = model.contentSeperateArr[indexPath.row];
+//    cell.showStr = model.contentSeperateArr[indexPath.row];
     
     return cell;
 }
@@ -348,7 +349,7 @@
     return [tableView fd_heightForCellWithIdentifier:@"DFLogerTableViewCell" configuration:^(DFLogerTableViewCell *cell) {
         
         DFLogModel *model = self -> _items[indexPath.section];
-        cell.showStr = model.contentSeperateArr[indexPath.row];
+//        cell.showStr = model.contentSeperateArr[indexPath.row];
     }];
 }
 
@@ -403,9 +404,9 @@
     // 复制到粘贴板
     NSIndexPath *indexPath = self.indexPathForSelectedRow;
     DFLogModel *model = _items[indexPath.section];
-    NSString *showStr = model.contentSeperateArr[indexPath.row];
-    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-    [pasteboard setString:showStr];
+//    NSString *showStr = model.contentSeperateArr[indexPath.row];
+//    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+//    [pasteboard setString:showStr];
 }
 
 - (void)menuDismiss {
@@ -427,10 +428,10 @@
         NSInteger section = [_items indexOfObject:header.model];
         
         NSMutableArray *indexPathes = [NSMutableArray array];
-        for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
-            
-            [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
-        }
+//        for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
+//            
+//            [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+//        }
         header.model.selected = YES;
         
         [self insertRowsAtIndexPaths:indexPathes withRowAnimation:UITableViewRowAnimationTop];
@@ -444,10 +445,10 @@
         NSInteger section = [_items indexOfObject:header.model];
         
         NSMutableArray *indexPathes = [NSMutableArray array];
-        for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
-            
-            [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
-        }
+//        for (int i = 0; i < header.model.contentSeperateArr.count; i++) {
+//
+//            [indexPathes addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+//        }
         
         header.model.selected = NO;
         
