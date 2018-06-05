@@ -30,8 +30,9 @@
     
     if (!_contentSeperateArr) {
         
-        NSString *contentStr = [NSString stringWithFormat:@"%@\n%@\n%@\n==end==", self.requestObject, self.responseObject, self.error];
-        _contentSeperateArr = [contentStr componentsSeparatedByString:@"\n"];
+//        NSString *contentStr = [NSString stringWithFormat:@"%@\n%@\n%@\n==end==", self.requestObject, self.responseObject, self.error];
+//        _contentSeperateArr = [contentStr componentsSeparatedByString:@"\n"];
+        _contentSeperateArr = @[];
     }
     
     return _contentSeperateArr;
