@@ -1,5 +1,5 @@
 PODS:
-  - DFLogManager (0.1.1):
+  - DFLogManager (0.1.2):
     - LSiOSPopView
     - Masonry
     - MJExtension
@@ -50,7 +50,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DFLogManager: 72aacbfe2d9fee2fb3ad78430869acb7cac7484c
+  DFLogManager: 321c9c9bd36b46c1e37bfac114155f06a534ae3a
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
@@ -62,6 +62,6 @@ SPEC CHECKSUMS:
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   "UITableView+FDTemplateLayoutCell": 5c949b4a5059c404b442926c0e80f81d10a2d66f
 
-PODFILE CHECKSUM: 725e71fbcef8501e3ac83a4ba9d33b2e471f28d2
+PODFILE CHECKSUM: fd40effc65052282f97ca8f95c37b8d4b2eee9c3
 
 COCOAPODS: 1.5.0
