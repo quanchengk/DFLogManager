@@ -16,7 +16,6 @@
 
 @interface DFLogerTableViewCell : UITableViewCell {
     
-    //    UITextView *_contentTV;
     UILabel *_content;
 }
 

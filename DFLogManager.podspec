@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = '日志控件'
 
 # This description is used to generate tags and improve search results.
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-#s.frameworks = 'UIKit'
+  s.frameworks = 'UIKit'
 #s.ios.library = 'sqlite3'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Masonry'
