@@ -106,20 +106,35 @@ static DFLogManager *_instance;
     
     NSAssert([view isKindOfClass:[UIView class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
     
-    if ([_bindView isKindOfClass:[UIControl class]]) {
-        [((UIControl *)_bindView) removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
-    }
-    _bindView = view;
-    _targetCount = count;
-    _duringTime = duringTime;
-    _currentCount = 0;
-    
-    if ([view isKindOfClass:[UIControl class]]) {
-        [((UIControl *)view) addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
-    }
-    else {
+    if (count > 0) {
         
-        [view addGestureRecognizer:self.tapGes];
+        if ([_bindView isKindOfClass:[UIControl class]]) {
+            [((UIControl *)_bindView) removeTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+        }
+        _bindView = view;
+        _targetCount = count;
+        _duringTime = duringTime;
+        _currentCount = 0;
+        view.userInteractionEnabled = YES;
+        
+        if ([view isKindOfClass:[UIControl class]]) {
+            [((UIControl *)view) addTarget:self action:@selector(_bindCount) forControlEvents:UIControlEventTouchUpInside];
+        }
+        else {
+            
+            [view addGestureRecognizer:self.tapGes];
+        }
+    }
+}
+
+- (void)recordCountDuringTime:(NSInteger)duringTime targetCount:(NSInteger)targetCount {
+    
+    NSAssert(targetCount > 0, @"%s 要求并且点击次数大于0", __func__);
+    if (targetCount > 0) {
+        
+        _targetCount = targetCount;
+        _duringTime = duringTime;
+        [self _bindCount];
     }
 }
 
@@ -204,6 +219,8 @@ static DFLogManager *_instance;
             [self _resetCount];
         }];
     }
+    
+    NSLog(@"%ld", _currentCount);
 }
 
 - (void)_resetCount {

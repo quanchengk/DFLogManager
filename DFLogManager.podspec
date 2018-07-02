@@ -8,12 +8,12 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.1.2'
+  s.version          = '0.1.3'
   s.summary          = '日志控件'
 
   s.description      = <<-DESC
   利用NSUserDefault进行本地缓存的日志控件
-  更新内容：优化交互体验，数据库调整为NSUserDefault
+  更新内容：优化交互体验，增加按次数弹出的方式
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
