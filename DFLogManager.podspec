@@ -27,7 +27,6 @@ Pod::Spec.new do |s|
   s.resources = 'DFLogManager/Assets/*.{png,bundle,plist}'    #引用其他资源文件
   
   s.frameworks = 'UIKit', 'Foundation'
-  s.libraries = 'c++'
   s.dependency 'Masonry'
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'

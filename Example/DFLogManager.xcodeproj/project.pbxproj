@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3212A23212A583700283465 /* LSiOSDoc */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3212A26212A583700283465 /* Build configuration list for PBXAggregateTarget "LSiOSDoc" */;
+			buildPhases = (
+				B3212A27212A583C00283465 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = LSiOSDoc;
+			productName = LSiOSDoc;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		295563BE99DDB6CA9D93FCD4 /* Pods_DFLogManager_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA40584F39A3D285BBE99888 /* Pods_DFLogManager_Example.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -64,6 +78,7 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8CF1BBB8FDD561A5FEF0ED6F /* DFLogManager.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DFLogManager.podspec; path = ../DFLogManager.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		B30BCDE82022B70700AF48A6 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		B3212A22212A57DE00283465 /* Doc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Doc.h; sourceTree = "<group>"; };
 		BA40584F39A3D285BBE99888 /* Pods_DFLogManager_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DFLogManager_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCD71F5E2B9FBC06C2A5D02B /* Pods-DFLogManager_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DFLogManager_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		CB7040BFF434A869DEA90C51 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -139,6 +154,7 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* DFViewController.h */,
 				6003F5A6195388D20070C39A /* DFViewController.m */,
+				B3212A22212A57DE00283465 /* Doc.h */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -257,6 +273,11 @@
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
+					B3212A23212A583700283465 = {
+						CreatedOnToolsVersion = 10.0;
+						DevelopmentTeam = 8QVHP566GK;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 6003F585195388D10070C39A /* Build configuration list for PBXProject "DFLogManager" */;
@@ -274,6 +295,7 @@
 			targets = (
 				6003F589195388D20070C39A /* DFLogManager_Example */,
 				6003F5AD195388D20070C39A /* DFLogManager_Tests */,
+				B3212A23212A583700283465 /* LSiOSDoc */,
 			);
 		};
 /* End PBXProject section */
@@ -390,6 +412,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B3212A27212A583C00283465 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here\nmkdir -p headerDoc\nfind /Users/longshine/Desktop/新能源/基础框架/DFLogManager/Example/DFLogManager -name \\*.h -print | xargs headerdoc2html -o headerDoc\ngatherheaderdoc headerDoc\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -604,6 +643,24 @@
 			};
 			name = Release;
 		};
+		B3212A24212A583700283465 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8QVHP566GK;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3212A25212A583700283465 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8QVHP566GK;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -630,6 +687,15 @@
 			buildConfigurations = (
 				6003F5C3195388D20070C39A /* Debug */,
 				6003F5C4195388D20070C39A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3212A26212A583700283465 /* Build configuration list for PBXAggregateTarget "LSiOSDoc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3212A24212A583700283465 /* Debug */,
+				B3212A25212A583700283465 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
