@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, DFLogType) {
 };
 
 /*!
- @abstract 日志控件会影响控制器的状态栏样式，如果需要修改状态栏，请在日志控件不显示的场景下测试样式
+ @abstract 日志控件会影响控制器的状态栏样式（固定为透明底、黑字，并且无法修改）。如果需要修改状态栏，请在日志悬浮球隐藏的场景下使用
  */
 @interface DFLogManager : NSObject
 
@@ -57,28 +57,40 @@ typedef NS_ENUM(NSInteger, DFLogType) {
 
 /*!
  @abstract 记录当前监听次数
- @discussion 在要求的时间内达到要求的次数，则触发日志弹出，和控件无关，交由
- @param <#参数说明，例如ratio 缩小的倍数...#>
- @result <#返回值类型#>
- @code <#示例代码#>
- */
-/* 记录当前监听次数，在要求的时间内达到要求的次数，则触发日志弹出
- * duringTime：两次连击的容忍范围，如果设为0，则不重置
- * targetCount：必须大于0，否则没有意义，定义到达该次数，触发日志弹出
+ @discussion 在指定的时间范围内达到要求的次数，则触发日志弹出，和具体哪个控件触发无关，交由项目自己触发
+ @param duringTime 两次连击的容忍范围，如果大于0，那么两两触发的时间必须在在duringTime（秒）时间内，超过这个范围则重头计数；设为0，则没有时间范围的概念，不重置。
+ @param targetCount 要求达到的触发次数，建议每次触发传的值相同，否则以最后一次传的数据为比较标准。触发次数达到该次数，触发日志弹出
  */
 - (void)recordCountDuringTime:(NSInteger)duringTime targetCount:(NSInteger)targetCount;
 
-/* 设置顶部的输入内容，目前的用法是在顶部配置全局的base url，如果改变，通知全局切换接口环境，避免后台频繁要打包不同环境的应用程序
- * 只要调用了此方法，就提供文本输入框，不判断是否有content
- * content：当前的url地址
- * modifyBlock：修改后的回调
+/*!
+ @abstract 设置顶部的输入内容
+ @discussion 目前的用法是在顶部配置全局的base url使用，输入结束后，如果改变，通知全局切换接口环境，避免后台因切换环境的频繁打包
+ @param content 当前的文本内容
+ @param modifyBlock 确认修改的行为回调，可在方法内保存最新文本内容
  */
 - (void)textFieldContent:(NSString *)content modifyBlock:(void (^)(NSString *text))modifyBlock;
 
-// 新增记录体
+/*!
+ @abstract 新增日志对象
+ @discussion 数据库做插入、覆盖行为
+ @param logModel 日志对象
+ 
+ @code
+ 
+ DFLogModel *logModel = [DFLogModel new];
+ logModel.selector = @"测试测试测试测试测试";
+ logModel.requestObject = @"请求方法";
+ logModel.responseObject = @"回参";
+ logModel.error = arc4random() % 2 ? @"错误" : @"";
+ [[DFLogManager shareLogManager] addLogModel:logModel];
+ @endcode
+ */
 - (void)addLogModel:(DFLogModel *)logModel;
 
-// 数据重置
+/*!
+ @abstract 日志数据清空
+ */
 - (void)reset;
 
 @end
