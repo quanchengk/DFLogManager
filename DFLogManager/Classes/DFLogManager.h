@@ -43,9 +43,9 @@ typedef NS_ENUM(NSInteger, DFLogType) {
 + (instancetype)shareLogManager;
 
 /*!
- @abstract 绑定指定的视图，通过隐藏事件来弹出日志
- @discussion 记录这个控件的点击次数，两次点击间隔需在during时间内，否则次数重置；如果满足条件的次数达到count，则触发日志弹出
- @param view 监听点击次数的对象，必传，且必须可交互
+ @abstract 绑定指定控件，通过绑定事件来弹出日志
+ @discussion 记录这个控件的点击次数，两次点击间隔需在duringTime时间内，否则次数重置；如果满足条件的次数达到count，触发日志弹出
+ @param view 监听点击次数的对象，必传。控件必须可交互
  @param duringTime 两次连击的容忍范围，如果设为0，则不重置
  @param count 必须大于0，否则没有意义，定义到达该次数，触发日志弹出
  
@@ -53,15 +53,15 @@ typedef NS_ENUM(NSInteger, DFLogType) {
  [[DFLogManager shareLogManager] bindView:btn duringTime:2 targetCount:5];
  @endcode
  */
-- (void)bindView:(UIView *)view duringTime:(NSInteger)duringTime targetCount:(NSInteger)count;
+- (void)bindView:(UIView *)view duringTime:(CGFloat)duringTime targetCount:(NSInteger)count;
 
 /*!
  @abstract 记录当前监听次数
  @discussion 在指定的时间范围内达到要求的次数，则触发日志弹出，和具体哪个控件触发无关，交由项目自己触发
- @param duringTime 两次连击的容忍范围，如果大于0，那么两两触发的时间必须在在duringTime（秒）时间内，超过这个范围则重头计数；设为0，则没有时间范围的概念，不重置。
+ @param duringTime 两次连击的容忍范围，如果大于0，那么两两触发的时间必须在在duringTime（秒）时间内，超过这个范围则从头计数；设为0，则没有时间范围的概念，不重置。
  @param targetCount 要求达到的触发次数，建议每次触发传的值相同，否则以最后一次传的数据为比较标准。触发次数达到该次数，触发日志弹出
  */
-- (void)recordCountDuringTime:(NSInteger)duringTime targetCount:(NSInteger)targetCount;
+- (void)recordCountDuringTime:(CGFloat)duringTime targetCount:(NSInteger)targetCount;
 
 /*!
  @abstract 设置顶部的输入内容

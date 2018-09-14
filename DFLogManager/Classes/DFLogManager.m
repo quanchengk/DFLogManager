@@ -20,7 +20,7 @@
 @property (retain, nonatomic) UITapGestureRecognizer *tapGes;
 @property (assign, nonatomic) NSInteger targetCount;
 @property (assign, nonatomic) NSInteger currentCount;
-@property (assign, nonatomic) NSInteger duringTime;
+@property (assign, nonatomic) CGFloat duringTime;
 
 @end
 
@@ -102,7 +102,7 @@ static DFLogManager *_instance;
     }
 }
 
-- (void)bindView:(UIView *)view duringTime:(NSInteger)duringTime targetCount:(NSInteger)count {
+- (void)bindView:(UIView *)view duringTime:(CGFloat)duringTime targetCount:(NSInteger)count {
     
     NSAssert([view isKindOfClass:[UIView class]] && count > 0, @"%s 要求必传监听对象，并且点击次数大于0", __func__);
     
@@ -127,7 +127,7 @@ static DFLogManager *_instance;
     }
 }
 
-- (void)recordCountDuringTime:(NSInteger)duringTime targetCount:(NSInteger)targetCount {
+- (void)recordCountDuringTime:(CGFloat)duringTime targetCount:(NSInteger)targetCount {
     
     NSAssert(targetCount > 0, @"%s 要求并且点击次数大于0", __func__);
     if (targetCount > 0) {
