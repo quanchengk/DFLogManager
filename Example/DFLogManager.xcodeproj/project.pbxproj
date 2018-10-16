@@ -329,8 +329,9 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DFLogManager/DFLogManager.framework",
+				"${BUILT_PRODUCTS_DIR}/LSiOSHook/LSiOSHook.framework",
 				"${BUILT_PRODUCTS_DIR}/LSiOSPopView/LSiOSPopView.framework",
 				"${BUILT_PRODUCTS_DIR}/LSiOSTextView/LSiOSTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/MJExtension/MJExtension.framework",
@@ -341,6 +342,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DFLogManager.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSHook.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSPopView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJExtension.framework",
@@ -350,7 +352,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		181A70C9F18E9E04806E4F1B /* [CP] Check Pods Manifest.lock */ = {
@@ -395,7 +397,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Expecta/Expecta.framework",
 				"${BUILT_PRODUCTS_DIR}/Expecta+Snapshots/Expecta_Snapshots.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSnapshotTestCase/FBSnapshotTestCase.framework",
@@ -410,7 +412,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DFLogManager_Tests/Pods-DFLogManager_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B3212A27212A583C00283465 /* ShellScript */ = {

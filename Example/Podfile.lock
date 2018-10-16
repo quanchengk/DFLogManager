@@ -1,5 +1,5 @@
 PODS:
-  - DFLogManager (0.1.3):
+  - DFLogManager (0.2.1):
     - LSiOSPopView
     - Masonry
     - MJExtension
@@ -10,18 +10,16 @@ PODS:
     - Expecta (~> 1.0)
     - FBSnapshotTestCase/Core (~> 2.0)
     - Specta (~> 1.0)
-  - FBSnapshotTestCase (2.1.4):
-    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
   - FBSnapshotTestCase/Core (2.1.4)
-  - FBSnapshotTestCase/SwiftSupport (2.1.4):
-    - FBSnapshotTestCase/Core
-  - LSiOSPopView (0.2.0):
+  - LSiOSHook (0.2.2)
+  - LSiOSPopView (0.2.3):
     - LSiOSTextView
     - Masonry
-  - LSiOSTextView (0.0.2)
+  - LSiOSTextView (0.2.0):
+    - LSiOSHook
   - Masonry (1.1.0)
   - MJExtension (3.0.15.1)
-  - MJRefresh (3.1.15.3)
+  - MJRefresh (3.1.15.7)
   - Specta (1.0.7)
   - "UITableView+FDTemplateLayoutCell (1.6)"
 
@@ -29,14 +27,14 @@ DEPENDENCIES:
   - DFLogManager (from `../`)
   - Expecta
   - "Expecta+Snapshots"
-  - FBSnapshotTestCase
   - Specta
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
+    - LSiOSHook
     - LSiOSPopView
     - LSiOSTextView
     - Masonry
@@ -50,18 +48,19 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DFLogManager: b45605a0802c1f6de3ac390e057b550dea6d8523
+  DFLogManager: fe571c8edc55c645965e02a4395d1701043de806
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  LSiOSPopView: 30982cabeec1ed158e90fafa3fa0efa2c2a06512
-  LSiOSTextView: 566be5e8254e69cee5a23ab50b65dc901e8ae073
+  LSiOSHook: 9924da89336e5cdc87ec8bc7e47a8a3195cb4cbf
+  LSiOSPopView: fda93faed1be970c7c344fb094d4fc36b29452a6
+  LSiOSTextView: 80d0a58d63ef82a64f5fb083ee25f93b580a4e36
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJExtension: 19bc33ce2eee2d319760f5622562cf581a6ff756
-  MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
+  MJRefresh: 697f8ec75ebdbe9207767bb682cf0f51b0d8a41f
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   "UITableView+FDTemplateLayoutCell": 5c949b4a5059c404b442926c0e80f81d10a2d66f
 
-PODFILE CHECKSUM: fd40effc65052282f97ca8f95c37b8d4b2eee9c3
+PODFILE CHECKSUM: a2317ac8a83afc871db60b61450e0f570b542541
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.6.0.beta.1

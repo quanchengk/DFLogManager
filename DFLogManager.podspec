@@ -8,13 +8,13 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.2.1'
+  s.version          = '0.3.1'
   s.summary          = '日志控件'
 
   s.description      = <<-DESC
   利用NSUserDefault进行本地缓存的日志控件
   更新内容：
-  时间限制格式调整为浮点值
+  排查内存泄漏问题
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'

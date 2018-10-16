@@ -61,7 +61,7 @@
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     BOOL res = NO;
-    if (logModel.requestID > 0) {
+    if ([logModel.requestID integerValue] > 0) {
         
         // 判重，如果是重复的，覆盖
         for (NSInteger i = 0; i < _datas.count; i++) {
@@ -100,7 +100,7 @@
 
 - (BOOL)deleteModel:(DFLogModel *)logModel {
     
-    if (logModel.requestID <= 0) {
+    if ([logModel.requestID integerValue] <= 0) {
         
         return NO;
     }
