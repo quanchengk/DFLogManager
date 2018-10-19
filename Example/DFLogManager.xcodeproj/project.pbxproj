@@ -331,9 +331,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DFLogManager_Example/Pods-DFLogManager_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DFLogManager/DFLogManager.framework",
-				"${BUILT_PRODUCTS_DIR}/LSiOSHook/LSiOSHook.framework",
-				"${BUILT_PRODUCTS_DIR}/LSiOSPopView/LSiOSPopView.framework",
-				"${BUILT_PRODUCTS_DIR}/LSiOSTextView/LSiOSTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/MJExtension/MJExtension.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
@@ -342,9 +339,6 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DFLogManager.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSHook.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSPopView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSiOSTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJExtension.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",

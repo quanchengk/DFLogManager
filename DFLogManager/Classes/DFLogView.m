@@ -9,12 +9,11 @@
 #import "DFLogView.h"
 #import "DFLogManager.h"
 #import <Masonry/Masonry.h>
-#import "LSPopKit.h"
 #import "DFLogTableView.h"
 
 #define DFScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
 
-@interface DFLogView () {
+@interface DFLogView () <UIActionSheetDelegate> {
     
     DFLogTableView *_tableView;
     
@@ -334,23 +333,32 @@ static DFLogView *_instance;
     
     if (![_textField.text isEqualToString:_oringalContent]) {
         
-        LSAlertView *alert = [[LSAlertView alloc] initWithStyle:LSAlertStyleTitleContent title:@"请确定当前编辑内容" message:_textField.text];
-        LSPopAction *cancel = [LSPopAction actionWithTitle:@"还原，不修改" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
-            self -> _textField.text = self -> _oringalContent;
-        }];
-        LSPopAction *modify = [LSPopAction actionWithTitle:@"继续编辑" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
-            [self -> _textField becomeFirstResponder];
-        }];
-        LSPopAction *ok = [LSPopAction actionWithTitle:@"确定" handler:^(LSPopAction * _Nonnull action, LSBasePopView * _Nonnull alertView) {
-            
-            if (self -> _modifyTopTextFieldBlock) {
-                self -> _modifyTopTextFieldBlock(self -> _textField.text);
+        UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"请确定当前编辑内容" delegate:self cancelButtonTitle:@"还原，不修改" destructiveButtonTitle:@"确定" otherButtonTitles:@"继续编辑", nil];
+        [sheet showInView:self];
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    NSLog(@"%ld", buttonIndex);
+    switch (buttonIndex) {
+        case 0:
+            // 确定
+            if (_modifyTopTextFieldBlock) {
+                _modifyTopTextFieldBlock( _textField.text);
             }
-            
-            self -> _oringalContent = self -> _textField.text;
-        }];
-        [alert addActions:@[cancel, modify, ok]];
-        [alert show];
+            _oringalContent = _textField.text;
+            break;
+        case 1:
+            // 继续编辑
+            [_textField becomeFirstResponder];
+            break;
+        case 2:
+            // 还原，不修改
+            _textField.text = _oringalContent;
+            break;
+        default:
+            break;
     }
 }
 

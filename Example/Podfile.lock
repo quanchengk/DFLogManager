@@ -1,6 +1,5 @@
 PODS:
-  - DFLogManager (0.2.1):
-    - LSiOSPopView
+  - DFLogManager (0.3.1):
     - Masonry
     - MJExtension
     - MJRefresh
@@ -11,12 +10,6 @@ PODS:
     - FBSnapshotTestCase/Core (~> 2.0)
     - Specta (~> 1.0)
   - FBSnapshotTestCase/Core (2.1.4)
-  - LSiOSHook (0.2.2)
-  - LSiOSPopView (0.2.3):
-    - LSiOSTextView
-    - Masonry
-  - LSiOSTextView (0.2.0):
-    - LSiOSHook
   - Masonry (1.1.0)
   - MJExtension (3.0.15.1)
   - MJRefresh (3.1.15.7)
@@ -34,9 +27,6 @@ SPEC REPOS:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
-    - LSiOSHook
-    - LSiOSPopView
-    - LSiOSTextView
     - Masonry
     - MJExtension
     - MJRefresh
@@ -48,13 +38,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DFLogManager: fe571c8edc55c645965e02a4395d1701043de806
+  DFLogManager: 258f5a8d8cc2aa669be98520f365c243d33bb102
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  LSiOSHook: 9924da89336e5cdc87ec8bc7e47a8a3195cb4cbf
-  LSiOSPopView: fda93faed1be970c7c344fb094d4fc36b29452a6
-  LSiOSTextView: 80d0a58d63ef82a64f5fb083ee25f93b580a4e36
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJExtension: 19bc33ce2eee2d319760f5622562cf581a6ff756
   MJRefresh: 697f8ec75ebdbe9207767bb682cf0f51b0d8a41f

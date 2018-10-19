@@ -8,13 +8,13 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DFLogManager'
-  s.version          = '0.3.1'
+  s.version          = '0.3.2'
   s.summary          = '日志控件'
 
   s.description      = <<-DESC
   利用NSUserDefault进行本地缓存的日志控件
   更新内容：
-  排查内存泄漏问题
+  和LSPopKit组件解耦
                        DESC
 
   s.homepage         = 'https://github.com/quanchengk/DFLogManager'
@@ -32,5 +32,4 @@ Pod::Spec.new do |s|
   s.dependency 'UITableView+FDTemplateLayoutCell'
   s.dependency 'MJRefresh'
   s.dependency 'MJExtension'
-  s.dependency 'LSiOSPopView'
 end
