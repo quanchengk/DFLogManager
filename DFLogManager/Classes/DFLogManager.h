@@ -38,6 +38,11 @@ typedef NS_ENUM(NSInteger, DFLogType) {
 @property (retain, nonatomic, readonly) DFLogDBManager *dbManager;
 
 /*!
+@abstract 权限口令，如果有值，则弹框要求输入与此对饮的口令，才可显示面板
+*/
+@property (nonatomic, strong) NSString *adminPsw;
+
+/*!
  @abstract 初始化方法，一个进程只需要一个日志管理类即可满足需求
  */
 + (instancetype)shareLogManager;

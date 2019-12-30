@@ -213,11 +213,36 @@ static DFLogManager *_instance;
     
     if (++_currentCount >= _targetCount) {
         
-        [[DFLogView shareLogView] showComplete:^{
+        void (^show)(void) = ^{
             
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            [self _resetCount];
-        }];
+            [[DFLogView shareLogView] showComplete:^{
+                
+                [NSObject cancelPreviousPerformRequestsWithTarget:self];
+                [self _resetCount];
+            }];
+        };
+        if (self.adminPsw.length) {
+            
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"请输入权限口令用以确认身份" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+
+            }];
+            UIAlertAction *ok = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+                if ([alert.textFields.firstObject.text isEqualToString:self.adminPsw]) {
+                    
+                    show();
+                }
+            }];
+            [alert addAction:ok];
+            
+            UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+            [keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+        }
+        else {
+            
+            show();
+        }
     }
     
     NSLog(@"%ld", _currentCount);

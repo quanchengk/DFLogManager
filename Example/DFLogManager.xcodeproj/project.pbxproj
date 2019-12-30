@@ -267,7 +267,7 @@
 				ORGANIZATIONNAME = "acct<blob>=0xE585A8E7A88BE681BA";
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = 8QVHP566GK;
+						DevelopmentTeam = EFFSATZCYP;
 						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
@@ -285,6 +285,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -563,8 +564,9 @@
 			baseConfigurationReference = 018FCA245B96CFB4D64554A7 /* Pods-DFLogManager_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Chengying Wen (9K4G6E7BNL)";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 8QVHP566GK;
+				DEVELOPMENT_TEAM = EFFSATZCYP;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DFLogManager/DFLogManager-Prefix.pch";
 				INFOPLIST_FILE = "DFLogManager/DFLogManager-Info.plist";
@@ -572,7 +574,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.LongShine.DFLogManager-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "846cb124-dcdf-43dd-9368-3a2d96e28127";
-				PROVISIONING_PROFILE_SPECIFIER = Guangzhou_development;
+				PROVISIONING_PROFILE_SPECIFIER = "HeFei_ Dev";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;

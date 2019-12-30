@@ -15,6 +15,7 @@
 {
     // Override point for customization after application launch.
     [DFLogManager shareLogManager].mode = DFLogTypeRelease;
+//    [DFLogManager shareLogManager].adminPsw = @"longshine01";
     [[DFLogManager shareLogManager] textFieldContent:@"https://www.baidu.com" modifyBlock:^(NSString *text) {
 
         NSLog(@"%@", text);
